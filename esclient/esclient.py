@@ -24,7 +24,10 @@ class ESClient:
         if self.es_url.endswith('/'):
             self.es_url = self.es_url[:-1]
 
-
+    """
+    Helper methods
+    """
+    
     def _make_path(self, path_components):
         """
         Smush together the path components. Empty components will be ignored.
@@ -56,18 +59,13 @@ class ESClient:
         if not hasattr(requests, method.lower()):
             raise ESClientException("No such HTTP Method '%s'!" % method.upper())
         req_method = getattr(requests, method.lower())
-        print "Firing request to url %s" % url
         self.last_response = req_method(url, **kwargs)
-        print self.last_response.status_code
+        resp_code = self.last_response.status_code
 
-        # TODO: ES returns a 409 when trying to create a document
-        # that exists already while using the op_type="create" option
-        if 200 <= self.last_response.status_code < 300:
-            response = json.loads(self.last_response.text)
-            return response
-        else:
-            return False
 
+    """
+    The API methods
+    """
     def index(self, index, doctype, body, docid=None, op_type=None):
         """
         Index the supplied document.
@@ -79,14 +77,36 @@ class ESClient:
             "create": create document only if it does not exists already
             None: create document or update an existing document
 
-        Returns The ElasticSearch response or False on error
+        Returns True on success (document added/updated or already exists while
+        using op_type="create") or False in all other instances
         """
         args = dict()
         if op_type:
             args["op_type"] = op_type
         path = self._make_path([index, doctype, docid])
-        return self.send_request('POST', path, body=body, querystring_args=args)
+        self.send_request('POST', path, body=body, querystring_args=args)
+        rescode = self.last_response.status_code
+        if rescode == 200:
+            return True
+        elif rescode == 409 and op_type=="create":
+            """ If document already exists, ES returns 409 """
+            return True
+        else:
+            return False
 
     def refresh(self, index):
         path = self._make_path([index, '_refresh'])
         return self.send_request('POST', path)
+
+    def get(self, index, docid, doctype="", fields=None):
+        args = dict()
+        if fields:
+            fields = ",".join(fields)
+            args['fields'] = fields
+
+        path = self._make_path([index, doctype, docid])
+        self.send_request('GET', path, querystring_args=args)
+        return json.loads(self.last_response.text)
+        
+    def search(self, index, query):
+        pass

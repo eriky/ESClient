@@ -7,27 +7,25 @@ es = esclient.ESClient("http://localhost:9200/", es_timeout=10)
 # Index API
 data = {"name": "Joe Tester","age": 21}
 print "Insert doc id 1"
-result = es.index("contacts", "person", body=data, docid=1)
-pprint(result)
-es.refresh("contacts")
+if not es.index("contacts", "person", body=data, docid=1):
+    print "[Test failed] Error while adding document"
 
 data = {"name": "Jane Tester","age": 23, "sex": "female"}
 print "Insert doc id 2"
-es.index("contacts", "person", body=data, docid=2)
-pprint(result)
-es.refresh("contacts")
+if not es.index("contacts", "person", body=data, docid=2):
+    print "[Test failed] Error while adding document"
 
-data = {"name": "Jane Tester","age": 23, "sex": "female"}
 print "Insert doc id 2 again with op_type = create"
-es.index("contacts", "person", body=data, docid="2", op_type="create")
-pprint(result)
+if not es.index("contacts", "person", body=data, docid="2", op_type="create"):
+    print "[Test failed] Error while adding document"
+
 es.refresh("contacts")
 
 # Get API
 print "Get doc id 1"
 result = es.send_request('GET', '/contacts/person/1')
+result = es.get('contacts', 1, 'person')
 pprint(result)
-es.refresh("contacts")
 
 # DELETE API
 print "Delete doc id 1"
