@@ -43,13 +43,11 @@ result = es.search(query_string_args=query_string_args)
 pprint(result)
 
 print "Search for name:Joe in all indexes and all doctypes, using a JSON query"
-query_body = """
-{
+query_body = {
     "query": {
        "term": {"naam": "joe"}
     }
 }
-"""
 result = es.search(query_body=query_body)
 pprint(result)
 

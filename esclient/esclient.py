@@ -55,7 +55,7 @@ class ESClient:
         url = self.es_url + path
 
         if body:
-            kwargs['data'] = body
+            kwargs['data'] = json.dumps(body)
 
         if not hasattr(requests, method.lower()):
             raise ESClientException("No such HTTP Method '%s'!" %
@@ -64,7 +64,10 @@ class ESClient:
         req_method = getattr(requests, method.lower())
         self.last_response = req_method(url, **kwargs)
         resp_code = self.last_response.status_code
-        print "HTTP response from url %s: %s" % (url, resp_code)
+        #print "HTTP response from url %s: %s" % (url, resp_code)
+        if resp_code == 500:
+            """ TODO: handle this somehow? """
+            pass
 
 
     def _search_operation(self, request_type, query_body=None,
@@ -128,7 +131,7 @@ class ESClient:
         path = self._make_path([index, doctype, docid])
         self.send_request('POST', path, body=body, query_string_args=args)
         rescode = self.last_response.status_code
-        if rescode == 200:
+        if 200 <= rescode < 300:
             return True
         elif rescode == 409 and op_type=="create":
             """ If document already exists, ES returns 409 """
