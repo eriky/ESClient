@@ -203,10 +203,18 @@ class ESClient:
                 doctypes=doctypes, operation_type='_count')
 
     def refresh(self, index):
+        """
+        Refresh index.
+        
+        Passes response from ES as a result. You can usually ignore
+        this response unless you want to be absolutely sure that things
+        went ok.
+        """
         path = self._make_path([index, '_refresh'])
         self.send_request('POST', path)
+        return json.loads(self.last_response.text)
 
-    def get(self, index, docid, doctype="", fields=None):
+    def get(self, index, doctype, docid, fields=None):
         args = dict()
         if fields:
             fields = ",".join(fields)
