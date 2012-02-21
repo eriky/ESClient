@@ -2,7 +2,7 @@ import requests
 from urllib import urlencode
 from pprint import pprint
 try:
-    import simplejson as json
+    import simplejson as json   # try the faster simplejson on old versions
 except:
     import json
 
@@ -11,13 +11,23 @@ class ESClientException(Exception):
 
 class ESClient:
     """
-    This is the most basic ElasticSearch client possible. It leaves much of
-    the work to you as a developer but it will take care of doing proper
-    HTTP requests.
-    There will also be a number of helper methods that you can optionally use
-    to make life easier.
+    ESClient is a very basic way of accessing ElasticSearch from Python.
+    
+    ESClient is based on JSON. When instantiating a new ESClient, you can
+    choose between using pure JSON or Python objects that can be converted
+    to JSON with json.loads().
+    To use pure JSON, instantiate the client as follows:
+    es = ESClient(type='json')
+    To use the more versatile python objects, simply use:
+    es = ESClient()
+    
+    You can look at the tests to see usage examples. These are guaranteed to
+    work if you have ElasticSearch running on the localhost:9200.
     """
-    def __init__(self, es_url, es_timeout=10):
+    def __init__(self, es_url, es_timeout=10, type='python'):
+        if type != 'python' and type != 'json':
+            raise ESClientException("Invalid type supplied: %s" % type)
+        self.type = type
         self.es_url = es_url
         self.es_timeout = es_timeout
 
@@ -55,7 +65,10 @@ class ESClient:
         url = self.es_url + path
 
         if body:
-            kwargs['data'] = json.dumps(body)
+            if self.type == 'python':
+                kwargs['data'] = json.dumps(body)
+            else:
+                kwargs['data'] = body
 
         if not hasattr(requests, method.lower()):
             raise ESClientException("No such HTTP Method '%s'!" %
@@ -94,20 +107,22 @@ class ESClient:
         if query_body:
             """ ES docs says you can use POST here too """
             self.send_request('GET', path, body=query_body)
-            return json.loads(self.last_response.text)
-
         elif query_string_args:
             self.send_request('GET', path, query_string_args=query_string_args)
-            return json.loads(self.last_response.text)
         elif operation_type == "_count":
             """
             A query is optional when counting, so we fire a request
             to the URL without a query only in this specific case.
             """
             self.send_request('GET', path)
-            return json.loads(self.last_response.text)
         else:
             raise ESClientException("No query body or query arguments")
+        
+        try:
+            return json.loads(self.last_response.text)
+        except:
+            raise ESClientException("Invalid JSON response from ElasticSearch")
+        
     """
     The API methods
     """
