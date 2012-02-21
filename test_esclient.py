@@ -14,21 +14,21 @@ class TestESClient(unittest.TestCase):
         
         """ Index some test data """
         data = {"name": "Joe Tester","age": 21, "sex": "male"}
-        self.assertTrue(self.es.index("contacts", "person", body=data,
+        self.assertTrue(self.es.index("contacts_esclient_test", "person", body=data,
                         docid=1))
         data = {"name": "Joe Schmoe","age": 17, "sex": "male"}
-        self.assertTrue(self.es.index("contacts", "person", body=data,
+        self.assertTrue(self.es.index("contacts_esclient_test", "person", body=data,
                                         docid=2))
         
-        result = self.es.refresh('contacts')
+        result = self.es.refresh('contacts_esclient_test')
         self.assertTrue(result['ok'])
 
     def tearDown(self):
         """docstring for tearDownClass"""
         
         """Delete a document"""
-        result = self.es.send_request('DELETE', '/contacts/person/1')
-        result = self.es.get('contacts', 'person', 1)
+        result = self.es.send_request('DELETE', '/contacts_esclient_test/person/1')
+        result = self.es.get('contacts_esclient_test', 'person', 1)
         self.assertFalse(result['exists'])
         """Delete the test schema"""
         # TODO
@@ -36,22 +36,22 @@ class TestESClient(unittest.TestCase):
 
 
     def test_index_api(self):
-        data = {"naam": "Jane Tester","age": 23, "sex": "female"}
-        self.assertTrue(self.es.index("contacts", "person", body=data,
+        data = {"name": "Jane Tester","age": 23, "sex": "female"}
+        self.assertTrue(self.es.index("contacts_esclient_test", "person", body=data,
                         docid=3))
         """
         Again, now with op_type='create', meaning: only index when
         the document id does not exist yet
         """
-        self.assertTrue(self.es.index("contacts", "person", body=data,
+        self.assertTrue(self.es.index("contacts_esclient_test", "person", body=data,
                         docid="3", op_type="create"))
         
         """ Ensure that the document has really been indexed """
-        result = self.es.get('contacts', 'person', 3)
+        result = self.es.get('contacts_esclient_test', 'person', 3)
         self.assertTrue(result['exists'])
 
     def test_get_api(self):
-        result = self.es.get('contacts', 'person', 1)
+        result = self.es.get('contacts_esclient_test', 'person', 1)
         self.assertTrue(result['exists'])
 
     def test_search_queryargs_api(self):
@@ -60,9 +60,10 @@ class TestESClient(unittest.TestCase):
                 "q": "name:Joe",
                 "sort":"age",
                 "timeout":10,
-                "fields": "id,age"
+                "fields": "id,name,age"
                 }
-        result = self.es.search(query_string_args=query_string_args)
+        result = self.es.search(query_string_args=query_string_args,
+                                indexes=['contacts_esclient_test'])
         self.assertEqual(result['hits']['total'], 2)
 
     def test_search_body_api(self):
@@ -72,12 +73,13 @@ class TestESClient(unittest.TestCase):
                "term": {"name": "joe"}
             }
         }
-        result = self.es.search(query_body=query_body)
+        result = self.es.search(query_body=query_body,
+                                indexes=['contacts_esclient_test'])
         self.assertEqual(result['hits']['total'], 2)
 
     def test_count_api(self):
         """docstring for count_api"""
-        result = self.es.count(indexes=['contacts'])
+        result = self.es.count(indexes=['contacts_esclient_test'])
         """ We can be sure there are at least two docs indexed """
         self.assertTrue(result['count'] > 1)
         
