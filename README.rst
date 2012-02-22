@@ -38,4 +38,5 @@ Credits
 This client library was written by Erik-Jan van Baaren (erikjan@gmail.com)
 
 A small amount of code is inspired by `pyelasticsearch`_.
+
 .. _`pyelasticsearch`: http://github.com/rhec/pyelasticsearch
