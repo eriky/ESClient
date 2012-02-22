@@ -6,25 +6,38 @@ try:
 except:
     import json
 
+__author__ = 'Erik-Jan van Baaren'
+__all__ = ['ESClient']
+__version__ = (0, 0, 1)
+
+def get_version():
+        return "%s.%s.%s" % __version__
+
 class ESClientException(Exception):
     pass
 
 class ESClient:
     """
     ESClient is a very basic way of accessing ElasticSearch from Python.
-    
+
     ESClient is based on JSON. When instantiating a new ESClient, you can
-    choose between using pure JSON or Python objects that can be converted
-    to JSON with json.loads().
-    To use pure JSON, instantiate the client as follows:
+    choose between using pure JSON or a hierachy of Python objects that can
+    be converted to JSON with json.loads(). ESClient methods will always
+    return a hierachy of Python objects and not the pure JSON.
+
+    To use JSON, instantiate the client as follows:
     es = ESClient(type='json')
+
     To use the more versatile python objects, simply use:
     es = ESClient()
-    
-    You can look at the tests to see usage examples. These are guaranteed to
-    work if you have ElasticSearch running on the localhost:9200.
+
+    You can look at the unit tests to see usage examples for all available API
+    methods that this library implements.
+    Any API calls that are not (yet) implemented by ESClient can still be used
+    by using the send_request() method to directly do and HTTP request to the
+    ElasticSearch API (if you are adventurous).
     """
-    def __init__(self, es_url, es_timeout=10, type='python'):
+    def __init__(self, es_url='http://localhost:9200', es_timeout=10, type='python'):
         if type != 'python' and type != 'json':
             raise ESClientException("Invalid type supplied: %s" % type)
         self.type = type
@@ -35,7 +48,7 @@ class ESClient:
             self.es_url = self.es_url[:-1]
 
     """
-    Helper methods
+    Internal helper methods
     """
 
     def _make_path(self, path_components):
@@ -103,7 +116,7 @@ class ESClient:
         indexes = ','.join(indexes)
         doctypes = ','.join(doctypes)
         path = self._make_path([indexes, doctypes, operation_type])
-        
+
         if query_body:
             self.send_request(request_type, path, body=query_body)
         elif query_string_args:
@@ -116,12 +129,12 @@ class ESClient:
             self.send_request('GET', path)
         else:
             raise ESClientException("No query body or query arguments")
-        
+
         try:
             return json.loads(self.last_response.text)
         except:
             raise ESClientException("Invalid JSON response from ElasticSearch")
-        
+
     """
     The API methods
     """
@@ -214,7 +227,7 @@ class ESClient:
     def delete(self, index, doctype, id):
         """
         Delete document from index.
-        
+
         Returns true if the document was found and false otherwise.
         """
         path = self._make_path([index, doctype, id])
@@ -225,10 +238,27 @@ class ESClient:
     """
     Indices API
     """
+    def create_index(self, index, body):
+        """
+        Create an index.
+
+        You have to supply the optional settings and mapping yourself
+        """
+        path = self._make_path([index])
+        self.send_request('PUT', path, body=body)
+        resp = json.loads(self.last_response.text)
+        try:
+            if resp['acknoledged'] == True:
+                return True
+            else:
+                return False
+        except:
+            return False
+
     def delete_index(self, index):
         """
         Delete an entire index.
-        
+
         Returns true if the index was deleted and false otherwise.
         """
         path = self._make_path([index])
@@ -242,7 +272,7 @@ class ESClient:
     def refresh(self, index):
         """
         Refresh index.
-        
+
         Returns True on success, false otherwise.
         """
         path = self._make_path([index, '_refresh'])

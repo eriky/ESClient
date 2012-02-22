@@ -10,7 +10,15 @@ class TestESClient(unittest.TestCase):
         self.es = esclient.ESClient("http://localhost:9200/")
 
         """ Create a test schema once """
-        # TODO
+        body = {
+            "settings": {
+                "number_of_shards": 1,
+                "number_of_replicas": 0
+            }
+        }
+        self.assertTrue(self.es.create_index('contacts_esclient_test', body))
+        self.assertFalse(self.es.create_index('contacts_esclient_test', body))
+        
         
         """ Index some test data """
         data = {"name": "Joe Tester","age": 21, "sex": "male"}
