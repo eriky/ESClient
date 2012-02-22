@@ -27,10 +27,11 @@ Some stuff that is currently on the roadmap:
 
 * Implementing more of the API methods
 * Implementing bulk indexing
+* Add debug logging
 
 License
 =======
-Licensed under the New BSD License.
+Licensed under the New BSD License. See also the LICENSE file
 
 Credits
 =======
