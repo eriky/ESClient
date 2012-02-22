@@ -18,8 +18,8 @@ class TestESClient(unittest.TestCase):
         }
         self.assertTrue(self.es.create_index('contacts_esclient_test', body))
         self.assertFalse(self.es.create_index('contacts_esclient_test', body))
-        
-        
+
+
         """ Index some test data """
         data = {"name": "Joe Tester","age": 21, "sex": "male"}
         self.assertTrue(self.es.index("contacts_esclient_test", "person", body=data,
@@ -27,12 +27,12 @@ class TestESClient(unittest.TestCase):
         data = {"name": "Joe Schmoe","age": 17, "sex": "male"}
         self.assertTrue(self.es.index("contacts_esclient_test", "person", body=data,
                                         docid=2))
-        
+
         self.assertTrue(self.es.refresh('contacts_esclient_test'))
 
     def tearDown(self):
         """docstring for tearDownClass"""
-        
+
         """Delete the test schema"""
         self.assertTrue(self.es.delete_index("contacts_esclient_test"))
 
@@ -46,7 +46,7 @@ class TestESClient(unittest.TestCase):
         """
         self.assertTrue(self.es.index("contacts_esclient_test", "person", body=data,
                         docid="3", op_type="create"))
-        
+
         """ Ensure that the document has really been indexed """
         result = self.es.get('contacts_esclient_test', 'person', 3)
         self.assertTrue(result['exists'])
@@ -94,8 +94,7 @@ class TestESClient(unittest.TestCase):
         self.assertFalse(result['exists'])
         result = self.es.get('contacts_esclient_test', 'person', 1)
         self.assertFalse(result['exists'])
-        
-        pass
+
     def test_deletebyquery_body_api(self):
         """Delete documents with a query in a HTTP body"""
         query_body = { "term": {"name": "joe"}}
@@ -120,6 +119,6 @@ class TestESClient(unittest.TestCase):
         result = self.es.delete('contacts_esclient_test', 'person', 1)
         result = self.es.get('contacts_esclient_test', 'person', 1)
         self.assertFalse(result['exists'])
-        
+
 if __name__ == '__main__':
     unittest.main()

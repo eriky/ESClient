@@ -5,6 +5,8 @@ try:
     import simplejson as json   # try the faster simplejson on old versions
 except:
     import json
+import logging
+log = logging.getLogger(__name__)
 
 __author__ = 'Erik-Jan van Baaren'
 __all__ = ['ESClient']
@@ -90,7 +92,7 @@ class ESClient:
         req_method = getattr(requests, method.lower())
         self.last_response = req_method(url, **kwargs)
         resp_code = self.last_response.status_code
-        #print "HTTP response from url %s: %s" % (url, resp_code)
+        log.debug("HTTP response from url %s: %s", (url, resp_code))
         if resp_code == 500:
             """ TODO: handle this somehow? """
             pass
@@ -247,8 +249,9 @@ class ESClient:
         path = self._make_path([index])
         self.send_request('PUT', path, body=body)
         resp = json.loads(self.last_response.text)
+
         try:
-            if resp['acknoledged'] == True:
+            if resp['acknowledged'] == True:
                 return True
             else:
                 return False
@@ -264,9 +267,12 @@ class ESClient:
         path = self._make_path([index])
         self.send_request('DELETE', path)
         resp = json.loads(self.last_response.text)
-        if resp['acknowledged']:
-            return True
-        else:
+        try:
+            if resp['acknowledged'] == True:
+                return True
+            else:
+                return False
+        except:
             return False
 
     def refresh(self, index):
