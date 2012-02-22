@@ -35,10 +35,7 @@ Licensed under the New BSD License. See also the LICENSE file
 
 Credits
 =======
-A small amount of code is inspired by or copied partly from `pyelasticsearch`_.
-Both that project and ESClient try to archieve the same thing: an easy to use
-Python library that helps in accessing the raw ElasticSearch REST API.
-I will keep looking at pyelasticsearch for inspiration but I also explicitly
-wanted to start my own project from scratch for several reasons.
+This client library was written by Erik-Jan van Baaren (erikjan@gmail.com)
 
+A small amount of code is inspired by `pyelasticsearch`_.
 .. _`pyelasticsearch`: http://github.com/rhec/pyelasticsearch
