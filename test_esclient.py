@@ -26,12 +26,8 @@ class TestESClient(unittest.TestCase):
     def tearDown(self):
         """docstring for tearDownClass"""
         
-        """Delete a document"""
-        result = self.es.send_request('DELETE', '/contacts_esclient_test/person/1')
-        result = self.es.get('contacts_esclient_test', 'person', 1)
-        self.assertFalse(result['exists'])
         """Delete the test schema"""
-        # TODO
+        self.es.delete_index("contacts_esclient_test")
         pass
 
 
@@ -77,15 +73,30 @@ class TestESClient(unittest.TestCase):
                                 indexes=['contacts_esclient_test'])
         self.assertEqual(result['hits']['total'], 2)
 
+    def test_deletebyquery_body_api(self):
+        """docstring for test_deletebyquery_api"""
+        query_body = { "term": {"name": "joe"}}
+        result = self.es.delete_by_query(query_body=query_body,
+                                indexes=['contacts_esclient_test'],
+                                doctypes=['person'])
+        self.assertTrue(result['ok'])
+        self.es.refresh('contacts')
+        result = self.es.get('contacts_esclient_test', 'person', 1)
+        self.assertFalse(result['exists'])
+        result = self.es.get('contacts_esclient_test', 'person', 1)
+        self.assertFalse(result['exists'])
+
     def test_count_api(self):
         """docstring for count_api"""
         result = self.es.count(indexes=['contacts_esclient_test'])
         """ We can be sure there are at least two docs indexed """
         self.assertTrue(result['count'] > 1)
-        
-    def test_deletebyquery_api(self):
-        """docstring for test_deletebyquery_api"""
-        pass
+
+    def test_delete_api(self):
+        """Delete a document"""
+        result = self.es.delete('contacts_esclient_test', 'person', 1)
+        result = self.es.get('contacts_esclient_test', 'person', 1)
+        self.assertFalse(result['exists'])
         
 if __name__ == '__main__':
     unittest.main()

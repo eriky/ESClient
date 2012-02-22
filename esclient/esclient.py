@@ -103,12 +103,11 @@ class ESClient:
         indexes = ','.join(indexes)
         doctypes = ','.join(doctypes)
         path = self._make_path([indexes, doctypes, operation_type])
-
+        
         if query_body:
-            """ ES docs says you can use POST here too """
-            self.send_request('GET', path, body=query_body)
+            self.send_request(request_type, path, body=query_body)
         elif query_string_args:
-            self.send_request('GET', path, query_string_args=query_string_args)
+            self.send_request(request_type, path, query_string_args=query_string_args)
         elif operation_type == "_count":
             """
             A query is optional when counting, so we fire a request
@@ -184,7 +183,7 @@ class ESClient:
         """
         return self._search_operation('DELETE', query_body=query_body,
                 query_string_args=query_string_args, indexes=indexes,
-                doctypes=doctypes)
+                doctypes=doctypes, operation_type='_query')
 
     def count(self, query_body=None, query_string_args=None,
                 indexes=["_all"], doctypes=[]):
@@ -202,18 +201,6 @@ class ESClient:
                 query_string_args=query_string_args, indexes=indexes,
                 doctypes=doctypes, operation_type='_count')
 
-    def refresh(self, index):
-        """
-        Refresh index.
-        
-        Passes response from ES as a result. You can usually ignore
-        this response unless you want to be absolutely sure that things
-        went ok.
-        """
-        path = self._make_path([index, '_refresh'])
-        self.send_request('POST', path)
-        return json.loads(self.last_response.text)
-
     def get(self, index, doctype, docid, fields=None):
         args = dict()
         if fields:
@@ -225,8 +212,49 @@ class ESClient:
         return json.loads(self.last_response.text)
 
     def delete(self, index, doctype, id):
+        """
+        Delete document from index.
+        
+        Returns true if the document was found and false otherwise.
+        """
         path = self._make_path([index, doctype, id])
         self.send_request('DELETE', path)
+        resp = json.loads(self.last_response.text)
+        return resp['found']
+
+    """
+    Indices API
+    """
+    def delete_index(self, index):
+        """
+        Delete an entire index.
+        
+        Returns true if the index was deleted and false otherwise.
+        """
+        path = self._make_path([index])
+        self.send_request('DELETE', path)
+        resp = json.loads(self.last_response.text)
+        if resp['acknowledged']:
+            return True
+        else:
+            return False
+
+    def refresh(self, index):
+        """
+        Refresh index.
+        
+        Returns True on success, false otherwise.
+        """
+        path = self._make_path([index, '_refresh'])
+        self.send_request('POST', path)
+        resp = json.loads(self.last_response.text)
+        try:
+            if resp['ok'] == True:
+                return True
+            else:
+                return False
+        except:
+            return False
 
 
 if __name__ == '__main__':
