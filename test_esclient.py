@@ -15,21 +15,18 @@ class TestESClient(unittest.TestCase):
         """ Index some test data """
         data = {"name": "Joe Tester","age": 21, "sex": "male"}
         self.assertTrue(self.es.index("contacts_esclient_test", "person", body=data,
-                        docid=1))
+                                        docid=1))
         data = {"name": "Joe Schmoe","age": 17, "sex": "male"}
         self.assertTrue(self.es.index("contacts_esclient_test", "person", body=data,
                                         docid=2))
         
-        result = self.es.refresh('contacts_esclient_test')
-        self.assertTrue(result['ok'])
+        self.assertTrue(self.es.refresh('contacts_esclient_test'))
 
     def tearDown(self):
         """docstring for tearDownClass"""
         
         """Delete the test schema"""
-        self.es.delete_index("contacts_esclient_test")
-        pass
-
+        self.assertTrue(self.es.delete_index("contacts_esclient_test"))
 
     def test_index_api(self):
         data = {"name": "Jane Tester","age": 23, "sex": "female"}
@@ -73,14 +70,32 @@ class TestESClient(unittest.TestCase):
                                 indexes=['contacts_esclient_test'])
         self.assertEqual(result['hits']['total'], 2)
 
+    def test_deletebyquery_querystring_api(self):
+        """Delete documents with a query using querystring option"""
+        query_string_args = {
+                "q": "name:Joe",
+                "sort":"age",
+                "timeout":10,
+                "fields": "id,name,age"
+                }
+        result = self.es.delete_by_query(query_string_args=query_string_args,
+                                         indexes=['contacts_esclient_test'])
+        self.assertTrue(result['ok'])
+        self.assertTrue(self.es.refresh('contacts_esclient_test'))
+        result = self.es.get('contacts_esclient_test', 'person', 1)
+        self.assertFalse(result['exists'])
+        result = self.es.get('contacts_esclient_test', 'person', 1)
+        self.assertFalse(result['exists'])
+        
+        pass
     def test_deletebyquery_body_api(self):
-        """docstring for test_deletebyquery_api"""
+        """Delete documents with a query in a HTTP body"""
         query_body = { "term": {"name": "joe"}}
         result = self.es.delete_by_query(query_body=query_body,
                                 indexes=['contacts_esclient_test'],
                                 doctypes=['person'])
         self.assertTrue(result['ok'])
-        self.es.refresh('contacts')
+        self.assertTrue(self.es.refresh('contacts_esclient_test'))
         result = self.es.get('contacts_esclient_test', 'person', 1)
         self.assertFalse(result['exists'])
         result = self.es.get('contacts_esclient_test', 'person', 1)
