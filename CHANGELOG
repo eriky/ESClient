@@ -1,0 +1,15 @@
+=========
+CHANGELOG
+=========
+
+0.1.0
+-----
+From now on I will conform to the Semantic Versioning Guidelines outlined
+on this site: http://semver.org/
+In that spirit, I bumped the minor version to 0.1.0 and will keep doing so
+until public API stability is reached.
+
+0.0.1
+-----
+First official release that was published to PyPI. Alpha quality, but with
+working unit tests for each API method.
