@@ -14,7 +14,7 @@ setup(name='ESClient',
             'Development Status :: 3 - Alpha',
             'Environment :: Web Environment',
             'Intended Audience :: Developers',
-            'License :: OSI Approved :: New BSD License',
+            'License :: OSI Approved :: BSD License',
             'Operating System :: OS Independent',
             'Programming Language :: Python',
             'Topic :: Internet :: WWW/HTTP :: Indexing/Search'
