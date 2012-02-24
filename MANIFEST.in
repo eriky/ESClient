@@ -1,3 +1,3 @@
-include *.txt *.rst
+include *.txt *.rst LICENSE
 recursive-include *.txt *.py *.rst
 recursive-exclude . *.pyc
