@@ -1,7 +1,6 @@
 ========
 ESClient
 ========
-
 ESClient is a Python library that uses the ElasticSearch REST API. It is meant
 to be light weight and be close to the actual REST API.
 
@@ -18,8 +17,6 @@ On Python 2.7 and up, you can also run all unit tests with:
 python -m unittest discover
 
 Note that the code will create an index called 'contacts_esclient_test'.
-Make sure you do not run these unit tests on a production index with the same
-name ;-)
 
 Roadmap
 =======
@@ -27,7 +24,7 @@ Some stuff that is currently on the roadmap:
 
 * Implementing more of the API methods
 * Implementing bulk indexing
-* Add debug logging
+* Add much more (debug) logging
 
 License
 =======
@@ -39,4 +36,8 @@ This client library was written by Erik-Jan van Baaren (erikjan@gmail.com)
 
 A small amount of code is inspired by `pyelasticsearch`_.
 
+Alpha quality disclaimer
+=======================
+Please note that the development status of this software is labeled alpha. It has only been
+tested in "lab setup". Comments, suggestions, code enhancements etc are very welcome!
 .. _`pyelasticsearch`: http://github.com/rhec/pyelasticsearch
