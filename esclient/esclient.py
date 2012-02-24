@@ -1,6 +1,5 @@
 import requests
 from urllib import urlencode
-from pprint import pprint
 try:
     import simplejson as json   # try the faster simplejson on old versions
 except:
@@ -20,26 +19,27 @@ class ESClientException(Exception):
 
 class ESClient:
     """
-    ESClient is a very basic way of accessing ElasticSearch from Python.
+    ESClient is a Python library that uses the ElasticSearch REST API.
 
-    ESClient is based on JSON. When instantiating a new ESClient, you can
-    choose between using pure JSON or a hierachy of Python objects that can
-    be converted to JSON with json.loads(). ESClient methods will always
-    return a hierachy of Python objects and not the pure JSON.
-
-    To use JSON, instantiate the client as follows:
-    es = ESClient(type='json')
+    When instantiating a new ESClient, you can choose between using pure JSON
+    or a hierachy of Python objects that can be converted to JSON with
+    json.loads(). ESClient methods will always return a hierachy of Python
+    objects and not the pure JSON.
 
     To use the more versatile python objects, simply use:
-    es = ESClient()
+    es = ESClient(es_url="http://localhost:9200")
 
-    You can look at the unit tests to see usage examples for all available API
+    To use JSON, instantiate the client as follows:
+    es = ESClient(es_url="http://localhost:9200", type='json')
+
+    Take a look at the unit tests to see usage examples for all available API
     methods that this library implements.
     Any API calls that are not (yet) implemented by ESClient can still be used
-    by using the send_request() method to directly do and HTTP request to the
+    by using the send_request() method to directly do an HTTP request to the
     ElasticSearch API (if you are adventurous).
     """
-    def __init__(self, es_url='http://localhost:9200', es_timeout=10, type='python'):
+    def __init__(self, es_url='http://localhost:9200', es_timeout=10,
+                 type='python'):
         if type != 'python' and type != 'json':
             raise ESClientException("Invalid type supplied: %s" % type)
         self.type = type
@@ -69,9 +69,9 @@ class ESClient:
         Make a raw HTTP request to ElasticSearch.
 
         You may use this method to manually do whatever is not (yet) supported
-        by this ElasticSearch client. This method does not return anything,
-        but sets the class variable called last_response, with is te response
-        object returned by the requests library.
+        by ESClient. This method does not return anything, but sets the class
+        variable called last_response, with is te response object returned by the
+        requests library.
         """
         if query_string_args:
             path = "?".join([path, urlencode(query_string_args)])
@@ -122,20 +122,21 @@ class ESClient:
         if query_body:
             self.send_request(request_type, path, body=query_body)
         elif query_string_args:
-            self.send_request(request_type, path, query_string_args=query_string_args)
+            self.send_request(request_type, path,
+                              query_string_args=query_string_args)
         elif operation_type == "_count":
-            """
-            A query is optional when counting, so we fire a request
-            to the URL without a query only in this specific case.
-            """
+            """ If both options were not used, there one more option left: no
+            query at all. A query is optional when counting, so we fire a
+            request to the URL without a query only in this specific case. """
             self.send_request('GET', path)
         else:
-            raise ESClientException("No query body or query arguments")
+            raise ESClientException("No query body or query arguments supplied")
 
         try:
             return json.loads(self.last_response.text)
         except:
-            raise ESClientException("Invalid JSON response from ElasticSearch")
+            raise ESClientException("Was unable to parse the ElasticSearch "
+            "response as JSON: \n%s", self.last_response.text)
 
     """
     The API methods
@@ -294,5 +295,4 @@ class ESClient:
 
 
 if __name__ == '__main__':
-    """ TODO: Run tests """
-    pass
+    print "This is a library, it is not intended to be started by itself."

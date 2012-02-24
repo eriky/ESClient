@@ -1,7 +1,4 @@
-#import logging
-#logger = logging.getLogger(__name__)
-
-VERSION = (0, 0, 1)
+VERSION = (0, 1, 0)
 
 __version__ = ".".join(map(str, VERSION))
 __author__ = "Erik-Jan van Baaren"

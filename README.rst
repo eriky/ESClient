@@ -18,6 +18,12 @@ python -m unittest discover
 
 Note that the code will create an index called 'contacts_esclient_test'.
 
+Bug Tracker and Issues
+======================
+If you find a bug or any other issue you may create an issue on GitHub!
+
+https://github.com/eriky/ESClient/issues
+
 Roadmap
 =======
 Some stuff that is currently on the roadmap:
