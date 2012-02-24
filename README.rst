@@ -40,4 +40,5 @@ Alpha quality disclaimer
 =======================
 Please note that the development status of this software is labeled alpha. It has only been
 tested in "lab setup". Comments, suggestions, code enhancements etc are very welcome!
+
 .. _`pyelasticsearch`: http://github.com/rhec/pyelasticsearch
