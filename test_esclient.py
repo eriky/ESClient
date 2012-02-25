@@ -6,13 +6,13 @@ class TestESClient(unittest.TestCase):
     """Test all API methods implemented in esclient library"""
     
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         """Create an ESClient"""
-        self.es = esclient.ESClient("http://localhost:9200/")
+        cls.es = esclient.ESClient("http://localhost:9200/")
 
         """Delete the test schema, if any. This will prevent any errors
         due to the schema already existing """
-        self.es.delete_index("contacts_esclient_test")
+        cls.es.delete_index("contacts_esclient_test")
         
     def setUp(self):
         """ Create a test schema once """

@@ -38,6 +38,7 @@ class ESClient:
     ElasticSearch API (if you are adventurous).
     
     """
+    
     def __init__(self, es_url='http://localhost:9200', es_timeout=10,
                  type='python'):
         if type != 'python' and type != 'json':
@@ -54,7 +55,7 @@ class ESClient:
     """
 
     def _make_path(self, path_components):
-        """Smush together the path components. Empty components will be
+        """Create path from components. Empty components will be
         ignored.
         
         """
@@ -70,8 +71,8 @@ class ESClient:
 
         You may use this method to manually do whatever is not (yet) supported
         by ESClient. This method does not return anything, but sets the class
-        variable called last_response, with is te response object returned by the
-        requests library.
+        variable called last_response, with is te response object returned by
+        the requests library.
         
         """
         if query_string_args:
