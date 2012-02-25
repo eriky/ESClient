@@ -1,10 +1,10 @@
-from esclient import esclient
+import esclient
 import unittest
 from pprint import pprint
 
 class TestESClient(unittest.TestCase):
     """Test all API methods implemented in esclient library"""
-    
+
     @classmethod
     def setUpClass(cls):
         """Create an ESClient"""
@@ -13,7 +13,7 @@ class TestESClient(unittest.TestCase):
         """Delete the test schema, if any. This will prevent any errors
         due to the schema already existing """
         cls.es.delete_index("contacts_esclient_test")
-        
+
     def setUp(self):
         """ Create a test schema once """
         body = {
