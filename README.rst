@@ -9,11 +9,11 @@ Install
 You can install ESClient with easy_install or pip. The following commands
 will install the latest released version of ESClient:
 
-``easy_install esclient
+``easy_install esclient``
 
 or
 
-pip install esclient``
+``pip install esclient``
 
 Usage
 =====
