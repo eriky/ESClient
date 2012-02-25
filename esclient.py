@@ -221,6 +221,13 @@ class ESClient:
                 doctypes=doctypes, operation_type='_count')
 
     def get(self, index, doctype, docid, fields=None):
+        """Get document from the index.
+        
+        You need to supply an index, doctype and id. Optionally, you can
+        list the fields that you want to retrieve, e.g.:
+        fields=['name','address']
+        
+        """
         args = dict()
         if fields:
             fields = ",".join(fields)
