@@ -18,8 +18,7 @@ class ESClientException(Exception):
     pass
 
 class ESClient:
-    """
-    ESClient is a Python library that uses the ElasticSearch REST API.
+    """ESClient is a Python library that uses the ElasticSearch REST API.
 
     When instantiating a new ESClient, you can choose between using pure JSON
     or a hierachy of Python objects that can be converted to JSON with
@@ -37,6 +36,7 @@ class ESClient:
     Any API calls that are not (yet) implemented by ESClient can still be used
     by using the send_request() method to directly do an HTTP request to the
     ElasticSearch API (if you are adventurous).
+    
     """
     def __init__(self, es_url='http://localhost:9200', es_timeout=10,
                  type='python'):
@@ -54,8 +54,9 @@ class ESClient:
     """
 
     def _make_path(self, path_components):
-        """
-        Smush together the path components. Empty components will be ignored.
+        """Smush together the path components. Empty components will be
+        ignored.
+        
         """
         path_components = [str(component) for component
                             in path_components if component]
@@ -65,13 +66,13 @@ class ESClient:
         return path
 
     def send_request(self, method, path, body="", query_string_args={}):
-        """
-        Make a raw HTTP request to ElasticSearch.
+        """Make a raw HTTP request to ElasticSearch.
 
         You may use this method to manually do whatever is not (yet) supported
         by ESClient. This method does not return anything, but sets the class
         variable called last_response, with is te response object returned by the
         requests library.
+        
         """
         if query_string_args:
             path = "?".join([path, urlencode(query_string_args)])
@@ -101,8 +102,7 @@ class ESClient:
     def _search_operation(self, request_type, query_body=None,
                     operation_type="_search", query_string_args=None,
                     indexes=["_all"], doctypes=[]):
-        """
-        Perform a search operation. This method can be use for search,
+        """Perform a search operation. This method can be use for search,
         delete by search and count.
 
         Searching in ElasticSearch can be done in two ways:
@@ -110,6 +110,7 @@ class ESClient:
         2) using a full query body (JSON) by providing
         the query_body.
         You can choose one, but not both at the same time.
+        
         """
         if query_body and query_string_args:
             raise ESClientException("Found both a query body and query" +
@@ -141,9 +142,9 @@ class ESClient:
     """
     The API methods
     """
+    
     def index(self, index, doctype, body, docid=None, op_type=None):
-        """
-        Index the supplied document.
+        """Index the supplied document.
 
         Options:
         index -- the index name (e.g. twitter)
@@ -153,7 +154,8 @@ class ESClient:
             None: create document or update an existing document
 
         Returns True on success (document added/updated or already exists
-        while using op_type="create") or False in all other instances
+        while using op_type="create") or False in all other instances.
+        
         """
         args = dict()
         if op_type:
@@ -172,14 +174,14 @@ class ESClient:
 
     def search(self, query_body=None, query_string_args=None,
                 indexes=["_all"], doctypes=[]):
-        """
-        Perform a search operation.
+        """Perform a search operation.
 
         Searching in ElasticSearch can be done in two ways:
         1) with a query string, by providing query_args
         2) using a full query body (JSON) by providing
         the query_body.
         You can choose one, but not both at the same time.
+        
         """
         return self._search_operation('GET', query_body=query_body,
                 query_string_args=query_string_args, indexes=indexes,
@@ -188,14 +190,14 @@ class ESClient:
 
     def delete_by_query(self, query_body=None, query_string_args=None,
                 indexes=["_all"], doctypes=[]):
-        """
-        Delete based on a search operation.
+        """Delete based on a search operation.
 
         Searching in ElasticSearch can be done in two ways:
         1) with a query string, by providing query_args
         2) using a full query body (JSON) by providing
         the query_body.
         You can choose one, but not both at the same time.
+        
         """
         return self._search_operation('DELETE', query_body=query_body,
                 query_string_args=query_string_args, indexes=indexes,
@@ -203,8 +205,7 @@ class ESClient:
 
     def count(self, query_body=None, query_string_args=None,
                 indexes=["_all"], doctypes=[]):
-        """
-        Count based on a search operation. The query is optional, and when
+        """Count based on a search operation. The query is optional, and when
         not provided, it will use match_all to count all the docs.
 
         Searching in ElasticSearch can be done in two ways:
@@ -212,6 +213,7 @@ class ESClient:
         2) using a full query body (JSON) by providing
         the query_body.
         You can choose one, but not both at the same time.
+        
         """
         return self._search_operation('GET', query_body=query_body,
                 query_string_args=query_string_args, indexes=indexes,
@@ -228,10 +230,10 @@ class ESClient:
         return json.loads(self.last_response.text)
 
     def delete(self, index, doctype, id):
-        """
-        Delete document from index.
+        """Delete document from index.
 
         Returns true if the document was found and false otherwise.
+        
         """
         path = self._make_path([index, doctype, id])
         self.send_request('DELETE', path)
@@ -242,10 +244,10 @@ class ESClient:
     Indices API
     """
     def create_index(self, index, body):
-        """
-        Create an index.
+        """Create an index.
 
-        You have to supply the optional settings and mapping yourself
+        You have to supply the optional settings and mapping yourself.
+        
         """
         path = self._make_path([index])
         self.send_request('PUT', path, body=body)
@@ -260,10 +262,10 @@ class ESClient:
             return False
 
     def delete_index(self, index):
-        """
-        Delete an entire index.
+        """Delete an entire index.
 
         Returns true if the index was deleted and false otherwise.
+        
         """
         path = self._make_path([index])
         self.send_request('DELETE', path)
@@ -277,10 +279,10 @@ class ESClient:
             return False
 
     def refresh(self, index):
-        """
-        Refresh index.
+        """Refresh index.
 
         Returns True on success, false otherwise.
+        
         """
         path = self._make_path([index, '_refresh'])
         self.send_request('POST', path)
