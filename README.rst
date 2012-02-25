@@ -6,9 +6,11 @@ to be lightweight and be *close to the actual REST API* in terms of usage.
 
 Install
 =======
-You can install ESClient with easy_install or pip:
- easy_install esclient
- pip install esclient
+You can install ESClient with easy_install or pip. The following commands
+will install the latest released version of ESClient:
+
+``easy_install esclient``
+``pip install esclient``
 
 Usage
 =====
