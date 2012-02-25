@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
+import esclient
 
 setup(name='ESClient',
-        version='0.1.0',
+        version=esclient.get_version(),
         description='A lightweight Python client for ElasticSearch',
         author='Erik-Jan van Baaren',
         author_email='erikjan@gmail.com',
