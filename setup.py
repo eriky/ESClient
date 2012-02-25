@@ -8,9 +8,9 @@ setup(name='ESClient',
         author='Erik-Jan van Baaren',
         author_email='erikjan@gmail.com',
         url='https://github.com/eriky/ESClient',
-        packages=['esclient'],
+        py_modules=['esclient'],
         license='New BSD license',
-        keywords = ["elasticsearch"]
+        keywords = ["elasticsearch"],
         classifiers=[
             'Development Status :: 3 - Alpha',
             'Environment :: Web Environment',

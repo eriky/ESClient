@@ -4,6 +4,12 @@ ESClient
 ESClient is a Python library that uses the ElasticSearch REST API. It is meant
 to be lightweight and be *close to the actual REST API* in terms of usage.
 
+Install
+=======
+You can install ESClient with easy_install or pip:
+ easy_install esclient
+ pip install esclient
+
 Usage
 =====
 Please take a look at the test_esclient.py file for usage examples. This code
