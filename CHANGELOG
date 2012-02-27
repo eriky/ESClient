@@ -1,6 +1,10 @@
 =========
 CHANGELOG
 =========
+0.2.0
+* Removed option the chose between JSON of hierachy of Python object. It
+  would have created too much hassle.
+* Added API methods: mget, ...
 
 0.1.1
 -----

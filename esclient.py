@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 
 __author__ = 'Erik-Jan van Baaren'
 __all__ = ['ESClient']
-__version__ = (0, 1, 1)
+__version__ = (0, 2, 0)
 
 def get_version():
         return "%s.%s.%s" % __version__
@@ -59,8 +59,16 @@ class ESClient:
 
         You may use this method to manually do whatever is not (yet) supported
         by ESClient. This method does not return anything, but sets the class
-        variable called last_response, with is te response object returned by
-        the requests library.
+        variable called last_response, which is the response object returned
+        by the requests library.
+        
+        Arguments:
+        method -- HTTP method, e.g. 'GET', 'PUT', 'DELETE', etc.
+        path -- URL path
+        body -- the body, as a hierachy of Python objects that is parseable
+                to JSON with json.dumps()
+        query_string_args -- the query string arguments, which are the
+        key=value pairs after the question mark in any URL.
         
         """
         if query_string_args:
@@ -227,6 +235,8 @@ class ESClient:
         method does not allow you to specify fields per id. You can only
         specify the fields to retrieve once and this will be applied to
         all ids that are fetched.
+        Similarly, you can not specify an index and different doctypes. If
+        you need too, you should do a direct call with send_request instead.
         
         """
         path = self._make_path([index,doctype, '_mget'])

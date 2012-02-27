@@ -45,7 +45,6 @@ Some stuff that is currently on the roadmap:
 
 * Implementing more of the API methods
 * Implementing bulk indexing
-* Add much more (debug) logging
 * Pass timeout to ElasticSearch
 
 License
