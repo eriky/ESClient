@@ -1,6 +1,5 @@
 import esclient
 import unittest
-from pprint import pprint
 
 class TestESClient(unittest.TestCase):
     """Test all API methods implemented in esclient library"""
@@ -68,7 +67,7 @@ class TestESClient(unittest.TestCase):
 
         for doc in result['docs']:
             self.assertTrue(doc['_id'] == '1' or  doc['_id'] == '2')
-        
+
     def test_search_queryargs_api(self):
         """docstring for test_search_api"""
         query_string_args = {
