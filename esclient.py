@@ -28,9 +28,9 @@ class ESClient:
     Any API calls that are not (yet) implemented by ESClient can still be used
     by using the send_request() method to directly do an HTTP request to the
     ElasticSearch API (if you are adventurous).
-    
+
     """
-    
+
     def __init__(self, es_url='http://localhost:9200', es_timeout=10):
         self.es_url = es_url
         self.es_timeout = es_timeout
@@ -45,10 +45,9 @@ class ESClient:
     def _make_path(self, path_components):
         """Create path from components. Empty components will be
         ignored.
-        
+
         """
-        path_components = [str(component) for component
-                            in path_components if component]
+        path_components = map(str, filter(None, path_components))
         path = '/'.join(path_components)
         if not path.startswith('/'):
             path = '/'+path
@@ -61,7 +60,7 @@ class ESClient:
         by ESClient. This method does not return anything, but sets the class
         variable called last_response, which is the response object returned
         by the requests library.
-        
+
         Arguments:
         method -- HTTP method, e.g. 'GET', 'PUT', 'DELETE', etc.
         path -- URL path
@@ -69,7 +68,7 @@ class ESClient:
                 to JSON with json.dumps()
         query_string_args -- the query string arguments, which are the
         key=value pairs after the question mark in any URL.
-        
+
         """
         if query_string_args:
             path = "?".join([path, urlencode(query_string_args)])
@@ -104,7 +103,7 @@ class ESClient:
         2) using a full query body (JSON) by providing
         the query_body.
         You can choose one, but not both at the same time.
-        
+
         """
         if query_body and query_string_args:
             raise ESClientException("Found both a query body and query" +
@@ -136,7 +135,7 @@ class ESClient:
     """
     The API methods
     """
-    
+
     def index(self, index, doctype, body, docid=None, op_type=None):
         """Index the supplied document.
 
@@ -149,7 +148,7 @@ class ESClient:
 
         Returns True on success (document added/updated or already exists
         while using op_type="create") or False in all other instances.
-        
+
         """
         args = dict()
         if op_type:
@@ -175,7 +174,7 @@ class ESClient:
         2) using a full query body (JSON) by providing
         the query_body.
         You can choose one, but not both at the same time.
-        
+
         """
         return self._search_operation('GET', query_body=query_body,
                 query_string_args=query_string_args, indexes=indexes,
@@ -191,7 +190,7 @@ class ESClient:
         2) using a full query body (JSON) by providing
         the query_body.
         You can choose one, but not both at the same time.
-        
+
         """
         return self._search_operation('DELETE', query_body=query_body,
                 query_string_args=query_string_args, indexes=indexes,
@@ -207,7 +206,7 @@ class ESClient:
         2) using a full query body (JSON) by providing
         the query_body.
         You can choose one, but not both at the same time.
-        
+
         """
         return self._search_operation('GET', query_body=query_body,
                 query_string_args=query_string_args, indexes=indexes,
@@ -215,11 +214,11 @@ class ESClient:
 
     def get(self, index, doctype, docid, fields=None):
         """Get document from the index.
-        
+
         You need to supply an index, doctype and id. Optionally, you can
         list the fields that you want to retrieve, e.g.:
         fields=['name','address']
-        
+
         """
         args = dict()
         if fields:
@@ -237,7 +236,7 @@ class ESClient:
         all ids that are fetched.
         Similarly, you can not specify an index and different doctypes. If
         you need too, you should do a direct call with send_request instead.
-        
+
         """
         path = self._make_path([index,doctype, '_mget'])
         docs = []
@@ -249,12 +248,12 @@ class ESClient:
         body = {'docs': docs}
         self.send_request('GET', path, body=body)
         return json.loads(self.last_response.text)
-        
+
     def delete(self, index, doctype, id):
         """Delete document from index.
 
         Returns true if the document was found and false otherwise.
-        
+
         """
         path = self._make_path([index, doctype, id])
         self.send_request('DELETE', path)
@@ -268,7 +267,7 @@ class ESClient:
         """Create an index.
 
         You have to supply the optional settings and mapping yourself.
-        
+
         """
         path = self._make_path([index])
         self.send_request('PUT', path, body=body)
@@ -286,7 +285,7 @@ class ESClient:
         """Delete an entire index.
 
         Returns true if the index was deleted and false otherwise.
-        
+
         """
         path = self._make_path([index])
         self.send_request('DELETE', path)
@@ -303,7 +302,7 @@ class ESClient:
         """Refresh index.
 
         Returns True on success, false otherwise.
-        
+
         """
         path = self._make_path([index, '_refresh'])
         self.send_request('POST', path)

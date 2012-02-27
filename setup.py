@@ -5,7 +5,7 @@ import esclient
 
 with open('README.rst') as file:
     long_description = file.read()
-    
+
 setup(name='ESClient',
         version=esclient.get_version(),
         description='A lightweight Python client for ElasticSearch',
@@ -15,6 +15,7 @@ setup(name='ESClient',
         py_modules=['esclient'],
         license='New BSD license',
         keywords = ["elasticsearch"],
+        install_requires = ['requests'],
         classifiers=[
             'Development Status :: 3 - Alpha',
             'Environment :: Web Environment',
