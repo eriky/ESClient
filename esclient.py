@@ -11,11 +11,14 @@ __author__ = 'Erik-Jan van Baaren'
 __all__ = ['ESClient']
 __version__ = (0, 2, 0)
 
+
 def get_version():
         return "%s.%s.%s" % __version__
 
+
 class ESClientException(Exception):
     pass
+
 
 class ESClient:
     """ESClient is a Python library that uses the ElasticSearch REST API.
@@ -50,7 +53,7 @@ class ESClient:
         path_components = map(str, filter(None, path_components))
         path = '/'.join(path_components)
         if not path.startswith('/'):
-            path = '/'+path
+            path = '/' + path
         return path
 
     def send_request(self, method, path, body="", query_string_args={}):
@@ -88,9 +91,8 @@ class ESClient:
         resp_code = self.last_response.status_code
         log.debug("HTTP response from url %s: %s", (url, resp_code))
         if resp_code == 500:
-            """ TODO: handle this somehow? """
+            # TODO: handle this somehow?
             pass
-
 
     def _search_operation(self, request_type, query_body=None,
                     operation_type="_search", query_string_args=None,
@@ -124,7 +126,7 @@ class ESClient:
             request to the URL without a query only in this specific case. """
             self.send_request('GET', path)
         else:
-            raise ESClientException("No query body or query arguments supplied")
+            raise ESClientException("Mandatory query was not supplied")
 
         try:
             return json.loads(self.last_response.text)
@@ -158,8 +160,8 @@ class ESClient:
         rescode = self.last_response.status_code
         if 200 <= rescode < 300:
             return True
-        elif rescode == 409 and op_type=="create":
-            """ If document already exists, ES returns 409 """
+        elif rescode is 409 and op_type is "create":
+            # If document already exists, ES returns 409
             return True
         else:
             """ TODO: do some debug loggin """
@@ -238,7 +240,7 @@ class ESClient:
         you need too, you should do a direct call with send_request instead.
 
         """
-        path = self._make_path([index,doctype, '_mget'])
+        path = self._make_path([index, doctype, '_mget'])
         docs = []
         for id in ids:
             doc = {'_id': id}
