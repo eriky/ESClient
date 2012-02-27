@@ -20,16 +20,8 @@ class ESClientException(Exception):
 class ESClient:
     """ESClient is a Python library that uses the ElasticSearch REST API.
 
-    When instantiating a new ESClient, you can choose between using pure JSON
-    or a hierachy of Python objects that can be converted to JSON with
-    json.loads(). ESClient methods will always return a hierachy of Python
-    objects and not the pure JSON.
-
-    To use the more versatile python objects, simply use:
-    es = ESClient(es_url="http://localhost:9200")
-
-    To use JSON, instantiate the client as follows:
-    es = ESClient(es_url="http://localhost:9200", type='json')
+    ESClient methods will always return a hierachy of Python objects and not
+    the pure JSON as returned by ElasticSearch.
 
     Take a look at the unit tests to see usage examples for all available API
     methods that this library implements.
@@ -39,11 +31,7 @@ class ESClient:
     
     """
     
-    def __init__(self, es_url='http://localhost:9200', es_timeout=10,
-                 type='python'):
-        if type != 'python' and type != 'json':
-            raise ESClientException("Invalid type supplied: %s" % type)
-        self.type = type
+    def __init__(self, es_url='http://localhost:9200', es_timeout=10):
         self.es_url = es_url
         self.es_timeout = es_timeout
 
@@ -82,10 +70,7 @@ class ESClient:
         url = self.es_url + path
 
         if body:
-            if self.type == 'python':
-                kwargs['data'] = json.dumps(body)
-            else:
-                kwargs['data'] = body
+            kwargs['data'] = json.dumps(body)
 
         if not hasattr(requests, method.lower()):
             raise ESClientException("No such HTTP Method '%s'!" %
@@ -237,6 +222,24 @@ class ESClient:
         self.send_request('GET', path, query_string_args=args)
         return json.loads(self.last_response.text)
 
+    def mget(self, index, doctype, ids, fields=None):
+        """Perform a multi get. Although ElasticSearch supports it, this
+        method does not allow you to specify fields per id. You can only
+        specify the fields to retrieve once and this will be applied to
+        all ids that are fetched.
+        
+        """
+        path = self._make_path([index,doctype, '_mget'])
+        docs = []
+        for id in ids:
+            doc = {'_id': id}
+            if fields:
+                doc['fields'] = fields
+            docs.append(doc)
+        body = {'docs': docs}
+        self.send_request('GET', path, body=body)
+        return json.loads(self.last_response.text)
+        
     def delete(self, index, doctype, id):
         """Delete document from index.
 

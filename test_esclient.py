@@ -61,6 +61,14 @@ class TestESClient(unittest.TestCase):
         result = self.es.get('contacts_esclient_test', 'person', 1)
         self.assertTrue(result['exists'])
 
+    def test_mget_api(self):
+        """docstring for test_mget_api"""
+        result = self.es.mget('contacts_esclient_test', 'person',
+                              ids=[1,2], fields=['name','age'])
+
+        for doc in result['docs']:
+            self.assertTrue(doc['_id'] == '1' or  doc['_id'] == '2')
+        
     def test_search_queryargs_api(self):
         """docstring for test_search_api"""
         query_string_args = {
