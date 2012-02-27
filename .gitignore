@@ -3,6 +3,7 @@
 dist
 MANIFEST
 build
+TODO
 
 # OS or Editor folders
 .DS_Store
