@@ -4,7 +4,7 @@ CHANGELOG
 0.2.0
 * Removed option to choose between JSON or hierachy of Python objects. It
   would have created too much hassle.
-* Added API methods: mget, ...
+* Added API methods: mget, open+close index, aliases
 * small fixes here and there
 
 0.1.1

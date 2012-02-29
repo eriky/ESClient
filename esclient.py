@@ -56,6 +56,21 @@ class ESClient:
             path = '/' + path
         return path
 
+    def check_result(self, list, key, value):
+        """Check if key is an element of list, and check if that element
+        is equal (==) to value.
+        
+        Returns True if the key exists and is equal to given value, false
+        otherwise.
+        """
+        try:
+            if list[key] == value:
+                return True
+            else:
+                return False
+        except:
+            return False
+
     def send_request(self, method, path, body="", query_string_args={}):
         """Make a raw HTTP request to ElasticSearch.
 
@@ -274,14 +289,7 @@ class ESClient:
         path = self._make_path([index])
         self.send_request('PUT', path, body=body)
         resp = json.loads(self.last_response.text)
-
-        try:
-            if resp['acknowledged'] == True:
-                return True
-            else:
-                return False
-        except:
-            return False
+        return self.check_result(resp, 'acknowledged', True)
 
     def delete_index(self, index):
         """Delete an entire index.
@@ -292,13 +300,7 @@ class ESClient:
         path = self._make_path([index])
         self.send_request('DELETE', path)
         resp = json.loads(self.last_response.text)
-        try:
-            if resp['acknowledged'] == True:
-                return True
-            else:
-                return False
-        except:
-            return False
+        return self.check_result(resp, 'acknowledged', True)
 
     def refresh(self, index):
         """Refresh index.
@@ -309,14 +311,45 @@ class ESClient:
         path = self._make_path([index, '_refresh'])
         self.send_request('POST', path)
         resp = json.loads(self.last_response.text)
-        try:
-            if resp['ok'] == True:
-                return True
-            else:
-                return False
-        except:
-            return False
+        return self.check_result(resp, 'ok', True)
 
+    def aliases(self, alias, indexes):
+        """Create an alias for one or more indexes
+        
+        Arguments:
+        alias -- the alias name
+        indexes -- a list of indexes that this alias spans over
+        
+        """
+        query = []
+        for index in indexes:
+            query
+
+    def open_index(self, index):
+        """Open a closed index.
+        
+        Opening a closed index will make that index go through the normal
+        recover process.
+        
+        Returns True on success, False of failure.
+        
+        """
+        path = self._make_path([index, '_open'])
+        self.send_request('POST', path)
+        resp = json.loads(self.last_response.text)
+        return self.check_result(resp, 'ok', True)
+        
+    def close_index(self, index):
+        """Close an index. A closed index has almost no overhead on the
+        cluster except for maintaining its metadata. A closed index is
+        blocked for reading and writing.
+        
+        Returns True on success, False of failure.
+        """
+        path = self._make_path([index, '_close'])
+        self.send_request('POST', path)
+        resp = json.loads(self.last_response.text)
+        return self.check_result(resp, 'ok', True)
 
 if __name__ == '__main__':
     print "This is a library, it is not intended to be started by itself."

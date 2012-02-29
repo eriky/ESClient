@@ -41,6 +41,11 @@ class TestESClient(unittest.TestCase):
         """Delete the test schema"""
         self.assertTrue(self.es.delete_index("contacts_esclient_test"))
 
+    def test_open_close_index(self):
+        """docstring for test_open_index"""
+        self.assertTrue(self.es.close_index('contacts_esclient_test'))
+        self.assertTrue(self.es.open_index('contacts_esclient_test'))
+        
     def test_index_api(self):
         data = {"name": "Jane Tester","age": 23, "sex": "female"}
         self.assertTrue(self.es.index("contacts_esclient_test", "person", body=data,
