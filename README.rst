@@ -72,10 +72,10 @@ tested in "lab setup". Comments, suggestions, code enhancements etc are very wel
 
 .. _`pyelasticsearch`: http://github.com/rhec/pyelasticsearch
 
-CHANGELOG
+Changelog
 =========
-0.2.0
------
+master branch
+-------------
 * Removed option to choose between JSON or hierachy of Python objects. It
   would have created too much hassle.
 * Added API methods: mget, open+close index, aliases
