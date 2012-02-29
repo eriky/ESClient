@@ -102,13 +102,6 @@ class ESClient:
                                     method.upper())
         
         self.last_response = requests.request(method.lower(), url, **kwargs)
-        #req_method = getattr(requests, method.lower())
-        #self.last_response = req_method(url, **kwargs)
-        resp_code = self.last_response.status_code
-        log.debug("HTTP response from url %s: %s", (url, resp_code))
-        if resp_code == 500:
-            # TODO: handle this somehow?
-            pass
 
     def _search_operation(self, request_type, query_body=None,
                     operation_type="_search", query_string_args=None,
