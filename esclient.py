@@ -85,9 +85,10 @@ class ESClient:
         if not hasattr(requests, method.lower()):
             raise ESClientException("No such HTTP Method '%s'!" %
                                     method.upper())
-
-        req_method = getattr(requests, method.lower())
-        self.last_response = req_method(url, **kwargs)
+        
+        self.last_response = requests.request(method.lower(), url, **kwargs)
+        #req_method = getattr(requests, method.lower())
+        #self.last_response = req_method(url, **kwargs)
         resp_code = self.last_response.status_code
         log.debug("HTTP response from url %s: %s", (url, resp_code))
         if resp_code == 500:
@@ -160,11 +161,10 @@ class ESClient:
         rescode = self.last_response.status_code
         if 200 <= rescode < 300:
             return True
-        elif rescode is 409 and op_type is "create":
+        elif rescode == 409 and op_type == "create":
             # If document already exists, ES returns 409
             return True
         else:
-            """ TODO: do some debug loggin """
             return False
 
     def search(self, query_body=None, query_string_args=None,
