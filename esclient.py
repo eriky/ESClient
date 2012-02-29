@@ -21,7 +21,8 @@ class ESClientException(Exception):
 
 
 class ESClient:
-    """ESClient is a Python library that uses the ElasticSearch REST API.
+    """ESClient is a Python library that warps around the ElasticSearch
+    REST API.
 
     ESClient methods will always return a hierachy of Python objects and not
     the pure JSON as returned by ElasticSearch.
@@ -30,13 +31,13 @@ class ESClient:
     methods that this library implements.
     Any API calls that are not (yet) implemented by ESClient can still be used
     by using the send_request() method to directly do an HTTP request to the
-    ElasticSearch API (if you are adventurous).
+    ElasticSearch API.
 
     """
 
-    def __init__(self, es_url='http://localhost:9200', es_timeout=10):
+    def __init__(self, es_url='http://localhost:9200', request_timeout=10):
         self.es_url = es_url
-        self.es_timeout = es_timeout
+        self.request_timeout = request_timeout
 
         if self.es_url.endswith('/'):
             self.es_url = self.es_url[:-1]
@@ -91,7 +92,7 @@ class ESClient:
         if query_string_args:
             path = "?".join([path, urlencode(query_string_args)])
 
-        kwargs = { 'timeout': self.es_timeout }
+        kwargs = { 'timeout': self.request_timeout }
         url = self.es_url + path
 
         if body:
@@ -240,12 +241,18 @@ class ESClient:
         return json.loads(self.last_response.text)
 
     def mget(self, index, doctype, ids, fields=None):
-        """Perform a multi get. Although ElasticSearch supports it, this
-        method does not allow you to specify fields per id. You can only
-        specify the fields to retrieve once and this will be applied to
-        all ids that are fetched.
-        Similarly, you can not specify an index and different doctypes. If
-        you need too, you should do a direct call with send_request instead.
+        """Perform a multi get.
+        
+        Although ElasticSearch supports it, this method does not allow you to
+        specify the index and/or fields per id. So you can only specify the
+        index and fields once and this will be applied to all document id's
+        you want to fetch.
+        
+        Arguments:
+            index -- the index name
+            doctype -- the document type
+            ids -- a list of ids to fetch
+            fields -- option list of fields to return
 
         """
         path = self._make_path([index, doctype, '_mget'])
