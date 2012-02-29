@@ -71,3 +71,33 @@ Please note that the development status of this software is labeled alpha. It ha
 tested in "lab setup". Comments, suggestions, code enhancements etc are very welcome!
 
 .. _`pyelasticsearch`: http://github.com/rhec/pyelasticsearch
+
+CHANGELOG
+=========
+0.2.0
+-----
+* Removed option to choose between JSON or hierachy of Python objects. It
+  would have created too much hassle.
+* Added API methods: mget, open+close index, aliases
+* small fixes here and there
+
+0.1.1
+-----
+* Added docstring to the get API
+* made sure that makedist.sh removes old MANIFEST file before making new
+  package
+* fixed version string in esclient.py
+
+
+0.1.0
+-----
+From now on I will conform to the Semantic Versioning Guidelines outlined
+on this site: http://semver.org/
+In that spirit, I bumped the minor version to 0.1.0 and will keep doing so
+until public API stability is reached.
+
+0.0.1
+-----
+First official release that was published to PyPI. Alpha quality, but with
+working unit tests for each API method.
+
