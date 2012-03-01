@@ -282,7 +282,7 @@ class ESClient:
     """
     Indices API
     """
-    def create_index(self, index, body):
+    def create_index(self, index, body=None):
         """Create an index.
 
         You have to supply the optional settings and mapping yourself.
