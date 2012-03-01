@@ -59,21 +59,16 @@ class ESClient:
             path = '/' + path
         return path
 
-    def check_result(self, list, key, value):
+    def check_result(self, results, key, value):
         """Check if key is an element of list, and check if that element
         is equal (==) to value.
         
         Returns True if the key exists and is equal to given value, false
         otherwise.
         """
-        try:
-            if list[key] == value:
-                return True
-            else:
-                return False
-        except:
-            return False
-
+        if key in results:
+            return results[key] == value
+        
     def send_request(self, method, path, body=None, query_string_args={}):
         """Make a raw HTTP request to ElasticSearch.
 
