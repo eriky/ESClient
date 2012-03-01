@@ -65,13 +65,6 @@ Dependencies
 ESClient uses the excellent *requests* library. If you don't have it installed
 you can use easy_install or pip install to fetch it.
 
-Alpha quality disclaimer
-=======================
-Please note that the development status of this software is labeled alpha. It has only been
-tested in "lab setup". Comments, suggestions, code enhancements etc are very welcome!
-
-.. _`pyelasticsearch`: http://github.com/rhec/pyelasticsearch
-
 Changelog
 =========
 0.2.1
@@ -105,4 +98,6 @@ until public API stability is reached.
 -----
 First official release that was published to PyPI. Alpha quality, but with
 working unit tests for each API method.
+
+.. _`pyelasticsearch`: http://github.com/rhec/pyelasticsearch
 
