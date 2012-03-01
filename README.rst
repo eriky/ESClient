@@ -76,6 +76,9 @@ Changelog
 =========
 master branch
 -------------
+
+0.2.0
+-----
 * Removed option to choose between JSON or hierachy of Python objects. It
   would have created too much hassle.
 * Added API methods: mget, open+close index, create_alias, delete_alias

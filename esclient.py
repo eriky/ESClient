@@ -74,7 +74,7 @@ class ESClient:
         except:
             return False
 
-    def send_request(self, method, path, body="", query_string_args={}):
+    def send_request(self, method, path, body=None, query_string_args={}):
         """Make a raw HTTP request to ElasticSearch.
 
         You may use this method to manually do whatever is not (yet) supported
