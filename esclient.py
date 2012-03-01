@@ -1,5 +1,7 @@
 import requests
 from urllib import urlencode
+from pprint import pprint
+
 try:
     import simplejson as json   # try the faster simplejson on old versions
 except:
@@ -313,17 +315,42 @@ class ESClient:
         resp = json.loads(self.last_response.text)
         return self.check_result(resp, 'ok', True)
 
-    def aliases(self, alias, indexes):
-        """Create an alias for one or more indexes
+    def create_alias(self, alias, indexes):
+        """Create an alias for one or more indexes.
         
         Arguments:
         alias -- the alias name
         indexes -- a list of indexes that this alias spans over
         
         """
-        query = []
+        query = {}
+        query['actions'] = []
         for index in indexes:
-            query
+            query['actions'].append({"add": {"index": index, "alias": alias}})
+        
+        path = self._make_path(['_aliases'])
+        self.send_request('POST', path, body=query)
+        resp = json.loads(self.last_response.text)
+        return self.check_result(resp, 'ok', True)
+
+    def delete_alias(self, alias, indexes):
+        """delete an alias.
+
+        Arguments:
+        alias -- the alias name to delete
+        indexes -- a list of indexes from which to delete the alias
+
+        """
+        query = {}
+        query['actions'] = []
+        for index in indexes:
+            query['actions'].append({"delete": {"index": index, "alias": alias}})
+
+        path = self._make_path(['_aliases'])
+        self.send_request('POST', path, body=query)
+        resp = json.loads(self.last_response.text)
+        return self.check_result(resp, 'ok', True)
+
 
     def open_index(self, index):
         """Open a closed index.

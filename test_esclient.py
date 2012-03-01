@@ -23,6 +23,7 @@ class TestESClient(unittest.TestCase):
         }
         self.assertTrue(self.es.create_index('contacts_esclient_test', body))
         self.assertFalse(self.es.create_index('contacts_esclient_test', body))
+        self.assertTrue(self.es.create_index('contacts_esclient_test2', body))
 
 
         """ Index some test data """
@@ -38,8 +39,9 @@ class TestESClient(unittest.TestCase):
     def tearDown(self):
         """docstring for tearDownClass"""
 
-        """Delete the test schema"""
+        """Delete the test schemas"""
         self.assertTrue(self.es.delete_index("contacts_esclient_test"))
+        self.assertTrue(self.es.delete_index("contacts_esclient_test2"))
 
     def test_open_close_index(self):
         """docstring for test_open_index"""
@@ -137,6 +139,12 @@ class TestESClient(unittest.TestCase):
         result = self.es.delete('contacts_esclient_test', 'person', 1)
         result = self.es.get('contacts_esclient_test', 'person', 1)
         self.assertFalse(result['exists'])
+
+    def test_create_delete_alias_api(self):
+        self.es.create_alias('contacts_alias', ['contacts_esclient_test',
+                                                'contacts_esclient_test2'])
+        self.es.delete_alias('contacts_alias', ['contacts_esclient_test',
+                                                'contacts_esclient_test2'])
 
 if __name__ == '__main__':
     unittest.main()
