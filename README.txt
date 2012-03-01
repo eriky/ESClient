@@ -74,8 +74,6 @@ tested in "lab setup". Comments, suggestions, code enhancements etc are very wel
 
 Changelog
 =========
-master branch
--------------
 
 0.2.0
 -----
