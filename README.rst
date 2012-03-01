@@ -74,6 +74,10 @@ tested in "lab setup". Comments, suggestions, code enhancements etc are very wel
 
 Changelog
 =========
+0.2.1
+-----
+* Added API methods: status, flush
+* some code improvements / beautifying
 
 0.2.0
 -----

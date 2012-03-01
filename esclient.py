@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 __author__ = 'Erik-Jan van Baaren'
 __all__ = ['ESClient']
-__version__ = (0, 2, 0)
+__version__ = (0, 2, 1)
 
 
 def get_version():
@@ -370,6 +370,28 @@ class ESClient:
         """
         path = self._make_path([index, '_close'])
         self.send_request('POST', path)
+        resp = json.loads(self.last_response.text)
+        return self.check_result(resp, 'ok', True)
+
+    def status(self, indexes=['_all']):
+        """Retrieve the status of one or more indices.
+        
+        """
+        path = self._make_path([','.join(indexes), '_status'])
+        self.send_request('GET', path)
+        return json.loads(self.last_response.text)
+
+    def flush(self, indexes=['_all'], refresh=False):
+        """Flush one or more indexes.
+        
+        Flush frees memory from the index by flushing data to the index
+        storage and clearing the internal transaction log.
+        """
+        path = self._make_path([','.join(indexes), '_flush'])
+        args = {}
+        if refresh:
+            args['refresh'] = "true"
+        self.send_request('POST', path, query_string_args=args)
         resp = json.loads(self.last_response.text)
         return self.check_result(resp, 'ok', True)
 

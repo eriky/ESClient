@@ -145,6 +145,15 @@ class TestESClient(unittest.TestCase):
                                                 'contacts_esclient_test2'])
         self.es.delete_alias('contacts_alias', ['contacts_esclient_test',
                                                 'contacts_esclient_test2'])
+    def test_status(self):
+        """docstring for test_status"""
+        result = self.es.status(indexes=['contacts_esclient_test'])
+        if 'ok' in result:
+            self.assertTrue(result['ok'])
+
+    def test_flush(self):
+        """docstring for test_flush"""
+        self.assertTrue(self.es.flush(['contacts_esclient_test'], refresh=True))
 
 if __name__ == '__main__':
     unittest.main()
