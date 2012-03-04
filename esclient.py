@@ -44,9 +44,9 @@ class ESClient:
         if self.es_url.endswith('/'):
             self.es_url = self.es_url[:-1]
 
-    """
-    Internal helper methods
-    """
+    #
+    # Internal helper methods
+    # 
 
     def _make_path(self, path_components):
         """Create path from components. Empty components will be
@@ -128,9 +128,9 @@ class ESClient:
             self.send_request(request_type, path,
                               query_string_args=query_string_args)
         elif operation_type == "_count":
-            """ If both options were not used, there one more option left: no
-            query at all. A query is optional when counting, so we fire a
-            request to the URL without a query only in this specific case. """
+            # If both options were not used, there one more option left: no
+            # query at all. A query is optional when counting, so we fire a
+            # request to the URL without a query only in this specific case.
             self.send_request('GET', path)
         else:
             raise ESClientException("Mandatory query was not supplied")
@@ -141,9 +141,9 @@ class ESClient:
             raise ESClientException("Was unable to parse the ElasticSearch "
             "response as JSON: \n%s", self.last_response.text)
 
-    """
-    The API methods
-    """
+    #
+    # The API methods
+    #
 
     def index(self, index, doctype, body, docid=None, op_type=None):
         """Index the supplied document.
@@ -376,6 +376,8 @@ class ESClient:
     def status(self, indexes=['_all']):
         """Retrieve the status of one or more indices.
         
+        Returns the JSON response converted to a hierachy of Python objects.
+        
         """
         path = self._make_path([','.join(indexes), '_status'])
         self.send_request('GET', path)
@@ -385,7 +387,9 @@ class ESClient:
         """Flush one or more indexes.
         
         Flush frees memory from the index by flushing data to the index
-        storage and clearing the internal transaction log.
+        storage and clearing the internal transaction log. There is
+        usually no need to use this function manually though.
+        
         """
         path = self._make_path([','.join(indexes), '_flush'])
         args = {}
