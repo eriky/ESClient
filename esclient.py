@@ -59,6 +59,19 @@ class ESClient:
             path = '/' + path
         return path
 
+    def _parse_json_response(self):
+        """Convert JSON response from ElasticSearch to a hiearchy of Python
+        objects and return that hiearchy.
+        
+        Throws an exception when parsing fails.
+        
+        """
+        try:
+            return json.loads(self.last_response.text)
+        except:
+            raise ESClientException("Unable to parse JSON response from "
+                                    "ElasticSearch")
+
     def check_result(self, results, key, value):
         """Check if key is an element of list, and check if that element
         is equal (==) to value.
@@ -235,7 +248,7 @@ class ESClient:
 
         path = self._make_path([index, doctype, docid])
         self.send_request('GET', path, query_string_args=args)
-        return json.loads(self.last_response.text)
+        return self._parse_json_response()
 
     def mget(self, index, doctype, ids, fields=None):
         """Perform a multi get.
@@ -261,7 +274,7 @@ class ESClient:
             docs.append(doc)
         body = {'docs': docs}
         self.send_request('GET', path, body=body)
-        return json.loads(self.last_response.text)
+        return self._parse_json_response()
 
     def delete(self, index, doctype, id):
         """Delete document from index.
