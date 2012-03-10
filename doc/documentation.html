@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.4: http://docutils.sourceforge.net/" />
+<title>ESClient usage</title>
+<style type="text/css">
+
+/*
+:Authors: Ian Bicking, Michael Foord
+:Contact: fuzzyman@voidspace.org.uk
+:Date: 2005/08/26 
+:Version: 0.1.0
+:Copyright: This stylesheet has been placed in the public domain.
+
+Stylesheet for Docutils.
+Based on ``blue_box.css`` by Ian Bicking
+and ``html4css1.css`` revision 1.46.
+*/
+
+@import url(http://rst2a.com/static/styles/html/default.css);
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+em, i {
+  /* Typically serif fonts have much nicer italics */
+  font-family: Times New Roman, Times, serif;
+}
+
+a.target {
+  color: blue;
+}
+
+a.target {
+  color: blue;
+}
+
+a.toc-backref {
+  text-decoration: none;
+  color: black;
+}
+
+a.toc-backref:hover {
+  background-color: inherit;
+}
+
+a:hover {
+  background-color: #cccccc;
+}
+
+div.attention, div.caution, div.danger, div.error, div.hint,
+div.important, div.note, div.tip, div.warning {
+  background-color: #cccccc;
+  padding: 3px;
+  width: 80%;
+}
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title  {
+  text-align: center;
+  background-color: #999999;
+  display: block;
+  margin: 0;
+}
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title {
+  color: #cc0000;
+  font-family: sans-serif;
+  text-align: center;
+  background-color: #999999;
+  display: block;
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Helvetica, Arial, sans-serif;
+  border: thin solid black;
+  /* This makes the borders rounded on Mozilla, which pleases me */
+  -moz-border-radius: 8px;
+  padding: 4px;
+}
+
+h1 {
+  background-color: #444499;
+  color: #ffffff;
+  border: medium solid black;
+}
+
+h1 a.toc-backref, h2 a.toc-backref { 
+  color: #ffffff;
+}
+
+h2 {
+  background-color: #666666;
+  color: #ffffff;
+  border: medium solid black;
+}
+
+h3, h4, h5, h6 {
+  background-color: #cccccc;
+  color: #000000;
+}
+
+h3 a.toc-backref, h4 a.toc-backref, h5 a.toc-backref, 
+h6 a.toc-backref { 
+  color: #000000;
+}
+
+h1.title {
+  text-align: center;
+  background-color: #444499;
+  color: #eeeeee;
+  border: thick solid black;
+  -moz-border-radius: 20px;
+}
+
+table.footnote {
+  padding-left: 0.5ex;
+}
+
+table.citation {
+  padding-left: 0.5ex
+}
+
+pre.literal-block, pre.doctest-block {
+  border: thin black solid;
+  padding: 5px;
+}
+
+.image img { border-style : solid;
+            border-width : 2px;
+}
+
+h1 tt, h2 tt, h3 tt, h4 tt, h5 tt, h6 tt {
+  font-size: 100%;
+}
+
+code, tt {
+  color: #000066;
+}
+
+</style>
+</head>
+<body>
+<div class="document" id="esclient-usage">
+<h1 class="title">ESClient usage</h1>
+<div class="section">
+<h1><a id="start-or-install-elasticsearch" name="start-or-install-elasticsearch">Start or install ElasticSearch</a></h1>
+<p>First of all, you have to get ElasticSearch running. If you don't have it
+installed, please head over to the <a class="reference" href="http://www.elasticsearch.org/">ElasticSearch</a> site and download it.
+Once unpacked, you can simply run ElasticSearch in the foreground with:</p>
+<p><tt class="docutils literal"><span class="pre">bin/elasticsearch</span> <span class="pre">-f</span></tt></p>
+<p>See.. it's easy to get a test system up and running.</p>
+</div>
+<div class="section">
+<h1><a id="installing-esclient" name="installing-esclient">Installing ESClient</a></h1>
+<p>Installing ESClient is easy too. You can use pip or easy_install, whichever
+you prefer.</p>
+<p>E.g. with easy_install you'd enter:</p>
+<p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">easy_install</span> <span class="pre">esclient</span></tt></p>
+<p>Alternatively you may also download ESClient from its <a class="reference" href="https://www.github.com/eriky/ESClient">Github</a> site. After
+unpacking, you can install ESClient with:</p>
+<p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></tt></p>
+</div>
+<div class="section">
+<h1><a id="an-interactive-python-session" name="an-interactive-python-session">An interactive Python session</a></h1>
+<p>To demonstrate ESClient, we will walk through an interactive Python session
+and show the ESClient API by example.</p>
+<p>First, fire up python:</p>
+<p><tt class="docutils literal"><span class="pre">$</span> <span class="pre">python</span></tt></p>
+<p>At the prompt, enter:</p>
+<p><tt class="docutils literal"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">import</span> <span class="pre">esclient</span></tt></p>
+<p>You can read the documentation that comes with the esclient code by entering:</p>
+<p><tt class="docutils literal"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">help(esclient)</span></tt></p>
+</div>
+</div>
+</body>
+</html>
