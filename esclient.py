@@ -59,15 +59,15 @@ class ESClient:
             path = '/' + path
         return path
 
-    def _parse_json_response(self):
-        """Convert JSON response from ElasticSearch to a hiearchy of Python
-        objects and return that hiearchy.
+    def _parse_json_response(self, response):
+        """Convert JSON response from ElasticSearch to a hierarchy of Python
+        objects and return that hierarchy.
         
         Throws an exception when parsing fails.
         
         """
         try:
-            return json.loads(self.last_response.text)
+            return json.loads(response)
         except:
             raise ESClientException("Unable to parse JSON response from "
                                     "ElasticSearch")
@@ -149,7 +149,7 @@ class ESClient:
             raise ESClientException("Mandatory query was not supplied")
 
         try:
-            return json.loads(self.last_response.text)
+            return self._parse_json_response(self.last_response.text)
         except:
             raise ESClientException("Was unable to parse the ElasticSearch "
             "response as JSON: \n%s", self.last_response.text)
@@ -248,7 +248,7 @@ class ESClient:
 
         path = self._make_path([index, doctype, docid])
         self.send_request('GET', path, query_string_args=args)
-        return self._parse_json_response()
+        return self._parse_json_response(self.last_response.text)
 
     def mget(self, index, doctype, ids, fields=None):
         """Perform a multi get.
@@ -274,7 +274,7 @@ class ESClient:
             docs.append(doc)
         body = {'docs': docs}
         self.send_request('GET', path, body=body)
-        return self._parse_json_response()
+        return self._parse_json_response(self.last_response.text)
 
     def delete(self, index, doctype, id):
         """Delete document from index.
@@ -285,7 +285,7 @@ class ESClient:
         path = self._make_path([index, doctype, id])
         self.send_request('DELETE', path)
         resp = json.loads(self.last_response.text)
-        return resp['found']
+        return self.check_result(resp, 'found', True)
 
     """
     Indices API
@@ -394,7 +394,7 @@ class ESClient:
         """
         path = self._make_path([','.join(indexes), '_status'])
         self.send_request('GET', path)
-        return json.loads(self.last_response.text)
+        return self._parse_json_response(self.last_response.text)
 
     def flush(self, indexes=['_all'], refresh=False):
         """Flush one or more indexes.
@@ -412,5 +412,23 @@ class ESClient:
         resp = json.loads(self.last_response.text)
         return self.check_result(resp, 'ok', True)
 
+    def get_mapping(self, indexes=['_all'], types=None):
+        """Get mapping(s).
+        
+        You can get mappings for multiple indexes and/or (??) multiple
+        types.
+        
+        Arguments:
+        indexes -- optional list of indexes
+        types -- optional list of types
+
+        TODO: find out if you can get a mapping for multiple indexes
+        and multiple types at the same time
+        """
+        path = self._make_path([','.join(indexes), ','.join(types),
+                                '_mapping'])
+        self.send_request('GET', path)
+        return self._parse_json_response(self.last_response.text)
+        
 if __name__ == '__main__':
     print "This is a library, it is not intended to be started by itself."
