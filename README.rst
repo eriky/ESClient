@@ -46,6 +46,11 @@ Currently on the roadmap to reach a 1.0 release are:
 * Implementing most or even all the API methods
 * Implementing bulk indexing
 
+You may have noticed this software is labeled as alpha quality. I will not
+remove this label until I have done extensive testing and am convinced that
+most errors are handled cleanly. For normal usage this software works pretty
+well so don't be too frightened of the alpha label!
+
 License
 =======
 Licensed under the New BSD License. See also the LICENSE file
