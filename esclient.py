@@ -412,10 +412,10 @@ class ESClient:
         resp = json.loads(self.last_response.text)
         return self.check_result(resp, 'ok', True)
 
-    def get_mapping(self, indexes=['_all'], types=[]):
+    def get_mapping(self, indexes=['_all'], doctypes=[]):
         """Get mapping(s).
         
-        You can get mappings for multiple indexes and/or (??) multiple
+        You can get mappings for multiple indexes and/or multiple
         types.
         
         Arguments:
@@ -426,9 +426,25 @@ class ESClient:
 
         # TODO: find out if you can get a mapping for multiple indexes
         # and multiple types at the same time
-        path = self._make_path([','.join(indexes), ','.join(types),
+        path = self._make_path([','.join(indexes), ','.join(doctypes),
                                 '_mapping'])
         self.send_request('GET', path)
+        return self._parse_json_response(self.last_response.text)
+
+    def put_mapping(self, mapping, doctype, indexes=['_all']):
+        """Register a mapping definition for a specific type. You can
+        register a mapping for one index, multiple indexes or even
+        all indexes (the default).
+        
+        Arguments:
+        indexes -- optional list of indexes (defaults to _all)
+        type -- the type you want this mapping to apply to
+        mapping -- a hierachy of Python object that can be converted to
+        a JSON document
+
+        """
+        path = self._make_path([','.join(indexes), doctype, '_mapping'])
+        self.send_request('PUT', path=path, body=mapping)
         return self._parse_json_response(self.last_response.text)
         
 if __name__ == '__main__':

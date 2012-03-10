@@ -148,8 +148,7 @@ class TestESClient(unittest.TestCase):
     def test_status(self):
         """docstring for test_status"""
         result = self.es.status(indexes=['contacts_esclient_test'])
-        if 'ok' in result:
-            self.assertTrue(result['ok'])
+        self.assertTrue(result['ok'])
 
     def test_flush(self):
         """docstring for test_flush"""
@@ -160,5 +159,11 @@ class TestESClient(unittest.TestCase):
         m = self.es.get_mapping(indexes=['contacts_esclient_test'])
         self.assertIn("contacts_esclient_test", m)
 
+    def test_put_mapping(self):
+        """docstring for test_put_mapping"""
+        mapping = {'persons': {'properties':{'name': {'type': 'string'}}}}
+        result = self.es.put_mapping(doctype='person', mapping=mapping, indexes=['contacts_esclient_test', 'contacts_esclient_test2'])
+        self.assertTrue(result['ok'])
+            
 if __name__ == '__main__':
     unittest.main()
