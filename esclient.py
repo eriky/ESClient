@@ -422,9 +422,10 @@ class ESClient:
         indexes -- optional list of indexes
         types -- optional list of types
 
-        TODO: find out if you can get a mapping for multiple indexes
-        and multiple types at the same time
         """
+
+        # TODO: find out if you can get a mapping for multiple indexes
+        # and multiple types at the same time
         path = self._make_path([','.join(indexes), ','.join(types),
                                 '_mapping'])
         self.send_request('GET', path)
