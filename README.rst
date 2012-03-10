@@ -62,6 +62,10 @@ ESClient uses the excellent *requests* library.
 
 Changelog
 =========
+0.2.2
+-----
+* Better error handling (by using _parse_json_response() method everywhere)
+
 0.2.1
 -----
 * Added API methods: status, flush

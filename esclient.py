@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 __author__ = 'Erik-Jan van Baaren'
 __all__ = ['ESClient']
-__version__ = (0, 2, 1)
+__version__ = (0, 2, 2)
 
 
 def get_version():
@@ -412,7 +412,7 @@ class ESClient:
         resp = json.loads(self.last_response.text)
         return self.check_result(resp, 'ok', True)
 
-    def get_mapping(self, indexes=['_all'], types=None):
+    def get_mapping(self, indexes=['_all'], types=[]):
         """Get mapping(s).
         
         You can get mappings for multiple indexes and/or (??) multiple

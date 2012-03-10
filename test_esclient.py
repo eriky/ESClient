@@ -155,5 +155,10 @@ class TestESClient(unittest.TestCase):
         """docstring for test_flush"""
         self.assertTrue(self.es.flush(['contacts_esclient_test'], refresh=True))
 
+    def test_get_mapping(self):
+        """docstring for test_get_mapping"""
+        m = self.es.get_mapping(indexes=['contacts_esclient_test'])
+        self.assertIn("contacts_esclient_test", m)
+
 if __name__ == '__main__':
     unittest.main()
