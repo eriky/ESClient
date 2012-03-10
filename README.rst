@@ -63,10 +63,10 @@ ESClient uses the excellent *requests* library.
 
 Changelog
 =========
-Master branch (future 0.3.0)
+0.3.0
 -----
 * Better error handling (by using _parse_json_response() method everywhere)
-* Added API methods: get_mapping, ..
+* Added API methods: get_mapping, put_mapping
 
 0.2.1
 -----
