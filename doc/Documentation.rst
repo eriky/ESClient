@@ -46,3 +46,15 @@ At the prompt, enter:
 You can read the documentation that comes with the esclient code by entering:
 
 ``>>> help(esclient)``
+
+This should be basic stuff for the average Python programmer though. So let
+us really dive into ESClient now.
+You first need to create an ESClient object, like so:
+
+``>>> es = esclient.ESClient()```
+
+ESClient will by default use localhost as the hostname in combination with
+the default port 9200. You can supply an alternative location for ElasticSearch
+like so:
+
+``>>> es = esclient.ESClient(es_url='http://<hostname>:<port>')``

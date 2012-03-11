@@ -164,7 +164,7 @@ Once unpacked, you can simply run ElasticSearch in the foreground with:</p>
 you prefer.</p>
 <p>E.g. with easy_install you'd enter:</p>
 <p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">easy_install</span> <span class="pre">esclient</span></tt></p>
-<p>Alternatively you may also download ESClient from its <a class="reference" href="https://www.github.com/eriky/ESClient">Github</a> site. After
+<p>Alternatively you may also download ESClient from its <a class="reference" href="https://github.com/eriky/ESClient">Github</a> site. After
 unpacking, you can install ESClient with:</p>
 <p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></tt></p>
 </div>
@@ -178,6 +178,14 @@ and show the ESClient API by example.</p>
 <p><tt class="docutils literal"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">import</span> <span class="pre">esclient</span></tt></p>
 <p>You can read the documentation that comes with the esclient code by entering:</p>
 <p><tt class="docutils literal"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">help(esclient)</span></tt></p>
+<p>This should be basic stuff for the average Python programmer though. So let
+us really dive into ESClient now.</p>
+<p>You first need to create an ESClient object, like so:</p>
+<p><tt class="docutils literal"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">es</span> <span class="pre">=</span> <span class="pre">esclient.ESClient()`</span></tt></p>
+<p>ESClient will by default use localhost as the hostname in combination with
+the default port 9200. You can supply an alternative location for ElasticSearch
+like so:</p>
+<p><tt class="docutils literal"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">es</span> <span class="pre">=</span> <span class="pre">esclient.ESClient(es_url='http://&lt;hostname&gt;:&lt;port&gt;')</span></tt></p>
 </div>
 </div>
 </body>

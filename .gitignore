@@ -1,10 +1,33 @@
 # Project specific
-*.pyc
+*.py[co]
 dist
 MANIFEST
 build
 TODO
 
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+
+# # Installer logs
+ pip-log.txt
+
+# Unit test / coverage reports
+ .coverage
+ .tox
+
+# #Translations
+ *.mo
+#
 # OS or Editor folders
 .DS_Store
 Thumbs.db
