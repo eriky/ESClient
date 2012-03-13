@@ -57,4 +57,33 @@ ESClient will by default use localhost as the hostname in combination with
 the default port 9200. You can supply an alternative location for ElasticSearch
 like so:
 
-``>>> es = esclient.ESClient(es_url='http://<hostname>:<port>')``
+``>>> es = esclient.ESClient('http://<hostname>:<port>')``
+
+Now that we have an ESClient instance, we can start doing some interesting
+stuff. First of all let's request the status of the ElasticSearch cluster:
+
+``>>>es.status()``
+
+``{u'indices': {}, u'ok': True, u'_shards': {u'successful': 0, u'failed': 0, u'total': 0}}``
+
+Well, great. Now let's create an index. Open the create index API page at
+http://www.elasticsearch.org/guide/reference/api/admin-indices-create-index.html
+and read that page. Now we are going to map this knowledge to ESClient.
+
+First of all we need to create a request body that allows us the specify
+the number of shards and number of replicas we want for our index
+
+::
+
+  body= { 
+	"settings" : {
+		"index" : {
+			"number_of_shards" : 1,
+			"number_of_replicas" : 0
+		}
+	}
+  }
+
+With this, we can create an index easily:
+
+``es.create_index("contacts", body=body)``
