@@ -6,7 +6,7 @@ to be lightweight and be *close to the actual REST API* in terms of usage.
 
 :Web: http://pypi.python.org/pypi/ESClient/
 :Download: http://pypi.python.org/pypi/ESClient/
-:Source: http://github.com/eriky/ESClient/
+:Source: https://github.com/eriky/ESClient/
 
 Installation
 ============
@@ -14,13 +14,13 @@ To install:
 	``python setup.py install``
 
 You can also install ESClient with easy_install or pip.
-The following commands will install the latest released version of ESClient:
+The following commands will install the latest released version of ESClient::
 
-    easy_install esclient
-	
-    or with pip:
-	
-    pip install esclient
+  $ easy_install esclient
+
+  or with pip:
+
+  $ pip install esclient
 
 Usage
 =====
