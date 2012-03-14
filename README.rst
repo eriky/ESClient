@@ -10,7 +10,9 @@ to be lightweight and be *close to the actual REST API* in terms of usage.
 
 Installation
 ============
+
 To install::
+
     python setup.py install
 
 You can also install ESClient with easy_install or pip.
