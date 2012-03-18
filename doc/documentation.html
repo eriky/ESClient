@@ -189,24 +189,26 @@ like so:</p>
 <p>Now that we have an ESClient instance, we can start doing some interesting
 stuff. First of all let's request the status of the ElasticSearch cluster:</p>
 <p><tt class="docutils literal"><span class="pre">&gt;&gt;&gt;es.status()</span></tt></p>
-<p><tt class="docutils literal"><span class="pre">{u'indices':</span> <span class="pre">{},</span> <span class="pre">u'ok':</span> <span class="pre">True,</span> <span class="pre">u'_shards':</span> <span class="pre">{u'successful':</span> <span class="pre">0,</span> <span class="pre">u'failed':</span> <span class="pre">0,</span> <span class="pre">u'total':</span> <span class="pre">0}}</span></tt></p>
+<pre class="literal-block">
+{u'indices': {}, u'ok': True, u'_shards': {u'successful': 0, u'failed': 0, u'total': 0}}
+</pre>
 <p>Well, great. Now let's create an index. Open the create index API page at
 <a class="reference" href="http://www.elasticsearch.org/guide/reference/api/admin-indices-create-index.html">http://www.elasticsearch.org/guide/reference/api/admin-indices-create-index.html</a>
 and read that page. Now we are going to map this knowledge to ESClient.</p>
 <p>First of all we need to create a request body that allows us the specify
-the number of shards and number of replicas we want for our index</p>
+the number of shards and number of replicas we want for our index:</p>
 <pre class="literal-block">
 body= {
-      &quot;settings&quot; : {
-              &quot;index&quot; : {
-                      &quot;number_of_shards&quot; : 1,
-                      &quot;number_of_replicas&quot; : 0
-              }
+  &quot;settings&quot; : {
+    &quot;index&quot; : {
+      &quot;number_of_shards&quot; : 1,
+      &quot;number_of_replicas&quot; : 0
+    }
       }
 }
 </pre>
 <p>With this, we can create an index easily:</p>
-<p><tt class="docutils literal"><span class="pre">es.create_index(&quot;contacts&quot;,</span> <span class="pre">body=body)</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">es.create_index(&quot;contacts&quot;,</span> <span class="pre">body=body)</span></tt></p>
 </div>
 </div>
 </body>
