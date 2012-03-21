@@ -43,7 +43,8 @@ class ESClient:
 
         if self.es_url.endswith('/'):
             self.es_url = self.es_url[:-1]
-
+        if not self.es_url.startswith('http://'):
+            self.es_url = "http://" + self.es_url
     #
     # Internal helper methods
     # 
