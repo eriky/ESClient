@@ -83,7 +83,7 @@ class ESClient:
         if key in results:
             return results[key] == value
         
-    def send_request(self, method, path, body=None, query_string_args={}):
+    def send_request(self, method, path, body=None, query_string_args={},encode_json=True):
         """Make a raw HTTP request to ElasticSearch.
 
         You may use this method to manually do whatever is not (yet) supported
@@ -107,7 +107,10 @@ class ESClient:
         url = self.es_url + path
 
         if body:
-            kwargs['data'] = json.dumps(body)
+            if encode_json:
+                kwargs['data'] = json.dumps(body)
+            else:
+                kwargs['data'] = body
 
         if not hasattr(requests, method.lower()):
             raise ESClientException("No such HTTP Method '%s'!" %
