@@ -47,7 +47,7 @@ class ESClient:
             self.es_url = "http://" + self.es_url
     #
     # Internal helper methods
-    # 
+    #
 
     def _make_path(self, path_components):
         """Create path from components. Empty components will be
@@ -63,9 +63,9 @@ class ESClient:
     def _parse_json_response(self, response):
         """Convert JSON response from ElasticSearch to a hierarchy of Python
         objects and return that hierarchy.
-        
+
         Throws an exception when parsing fails.
-        
+
         """
         try:
             return json.loads(response)
@@ -76,13 +76,13 @@ class ESClient:
     def check_result(self, results, key, value):
         """Check if key is an element of list, and check if that element
         is equal (==) to value.
-        
+
         Returns True if the key exists and is equal to given value, false
         otherwise.
         """
         if key in results:
             return results[key] == value
-        
+
     def send_request(self, method, path, body=None, query_string_args={},encode_json=True):
         """Make a raw HTTP request to ElasticSearch.
 
@@ -115,7 +115,7 @@ class ESClient:
         if not hasattr(requests, method.lower()):
             raise ESClientException("No such HTTP Method '%s'!" %
                                     method.upper())
-        
+
         self.last_response = requests.request(method.lower(), url, **kwargs)
 
     def _search_operation(self, request_type, query_body=None,
@@ -256,12 +256,12 @@ class ESClient:
 
     def mget(self, index, doctype, ids, fields=None):
         """Perform a multi get.
-        
+
         Although ElasticSearch supports it, this method does not allow you to
         specify the index and/or fields per id. So you can only specify the
         index and fields once and this will be applied to all document id's
         you want to fetch.
-        
+
         Arguments:
             index -- the index name
             doctype -- the document type
@@ -316,6 +316,19 @@ class ESClient:
         resp = json.loads(self.last_response.text)
         return self.check_result(resp, 'acknowledged', True)
 
+    def index_exists(self, index):
+        """Check if index exists.
+
+        Returns true if the index exists, false otherwise.
+
+        """
+        path = self._make_path([index])
+        self.send_request('HEAD', path)
+        if self.last_response.status_code == 200:
+            return True
+        else:
+            return False
+
     def refresh(self, index):
         """Refresh index.
 
@@ -329,17 +342,17 @@ class ESClient:
 
     def create_alias(self, alias, indexes):
         """Create an alias for one or more indexes.
-        
+
         Arguments:
         alias -- the alias name
         indexes -- a list of indexes that this alias spans over
-        
+
         """
         query = {}
         query['actions'] = []
         for index in indexes:
             query['actions'].append({"add": {"index": index, "alias": alias}})
-        
+
         path = self._make_path(['_aliases'])
         self.send_request('POST', path, body=query)
         resp = json.loads(self.last_response.text)
@@ -366,23 +379,23 @@ class ESClient:
 
     def open_index(self, index):
         """Open a closed index.
-        
+
         Opening a closed index will make that index go through the normal
         recover process.
-        
+
         Returns True on success, False of failure.
-        
+
         """
         path = self._make_path([index, '_open'])
         self.send_request('POST', path)
         resp = json.loads(self.last_response.text)
         return self.check_result(resp, 'ok', True)
-        
+
     def close_index(self, index):
         """Close an index. A closed index has almost no overhead on the
         cluster except for maintaining its metadata. A closed index is
         blocked for reading and writing.
-        
+
         Returns True on success, False of failure.
         """
         path = self._make_path([index, '_close'])
@@ -392,9 +405,9 @@ class ESClient:
 
     def status(self, indexes=['_all']):
         """Retrieve the status of one or more indices.
-        
+
         Returns the JSON response converted to a hierachy of Python objects.
-        
+
         """
         path = self._make_path([','.join(indexes), '_status'])
         self.send_request('GET', path)
@@ -402,11 +415,11 @@ class ESClient:
 
     def flush(self, indexes=['_all'], refresh=False):
         """Flush one or more indexes.
-        
+
         Flush frees memory from the index by flushing data to the index
         storage and clearing the internal transaction log. There is
         usually no need to use this function manually though.
-        
+
         """
         path = self._make_path([','.join(indexes), '_flush'])
         args = {}
@@ -418,10 +431,10 @@ class ESClient:
 
     def get_mapping(self, indexes=['_all'], doctypes=[]):
         """Get mapping(s).
-        
+
         You can get mappings for multiple indexes and/or multiple
         types.
-        
+
         Arguments:
         indexes -- optional list of indexes
         types -- optional list of types
@@ -439,7 +452,7 @@ class ESClient:
         """Register a mapping definition for a specific type. You can
         register a mapping for one index, multiple indexes or even
         all indexes (the default).
-        
+
         Arguments:
         indexes -- optional list of indexes (defaults to _all)
         type -- the type you want this mapping to apply to
@@ -450,6 +463,6 @@ class ESClient:
         path = self._make_path([','.join(indexes), doctype, '_mapping'])
         self.send_request('PUT', path=path, body=mapping)
         return self._parse_json_response(self.last_response.text)
-        
+
 if __name__ == '__main__':
     print "This is a library, it is not intended to be started by itself."

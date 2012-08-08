@@ -47,7 +47,7 @@ class TestESClient(unittest.TestCase):
         """docstring for test_open_index"""
         self.assertTrue(self.es.close_index('contacts_esclient_test'))
         self.assertTrue(self.es.open_index('contacts_esclient_test'))
-        
+
     def test_index_api(self):
         data = {"name": "Jane Tester","age": 23, "sex": "female"}
         self.assertTrue(self.es.index("contacts_esclient_test", "person", body=data,
@@ -164,6 +164,11 @@ class TestESClient(unittest.TestCase):
         mapping = {'persons': {'properties':{'name': {'type': 'string'}}}}
         result = self.es.put_mapping(doctype='person', mapping=mapping, indexes=['contacts_esclient_test', 'contacts_esclient_test2'])
         self.assertTrue(result['ok'])
-            
+
+    def test_index_exists(self):
+        result = self.es.index_exists("contacts_esclient_test")
+        self.assertTrue(result)
+
+
 if __name__ == '__main__':
     unittest.main()
