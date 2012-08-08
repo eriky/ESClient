@@ -75,6 +75,10 @@ Dependencies
 
 Changelog
 =========
+0.4.0
+-----
+* Added API method: index_exists
+
 0.3.0
 -----
 * Better error handling (by using _parse_json_response() method everywhere)
