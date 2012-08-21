@@ -169,6 +169,19 @@ class TestESClient(unittest.TestCase):
         result = self.es.index_exists("contacts_esclient_test")
         self.assertTrue(result)
 
+    def test_bulk(self):
+        self.es.bulk_index('contacts_esclient_test', 'bulk', {'test':'test'}, 1)
+        self.es.bulk_index('contacts_esclient_test', 'bulk', {'test':'test'}, 2)
+        self.assertTrue(self.es.bulk_push())
+        result = self.es.get('contacts_esclient_test', 'bulk', 2)
+        self.assertTrue(result['exists'])
+        self.es.bulk_index('contacts_esclient_test', 'bulk', {'test':'test'}, 3)
+        self.es.bulk_delete('contacts_esclient_test', 'bulk', 2)
+        self.assertTrue(self.es.bulk_push())
+        result = self.es.get('contacts_esclient_test', 'bulk', 2)
+        self.assertFalse(result['exists'])
+        result = self.es.get('contacts_esclient_test', 'bulk', 3)
+        self.assertTrue(result['exists'])
 
 if __name__ == '__main__':
     unittest.main()

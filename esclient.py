@@ -40,6 +40,7 @@ class ESClient:
     def __init__(self, es_url='http://localhost:9200', request_timeout=10):
         self.es_url = es_url
         self.request_timeout = request_timeout
+        self.bulk_data = ''
 
         if self.es_url.endswith('/'):
             self.es_url = self.es_url[:-1]
@@ -463,6 +464,34 @@ class ESClient:
         path = self._make_path([','.join(indexes), doctype, '_mapping'])
         self.send_request('PUT', path=path, body=mapping)
         return self._parse_json_response(self.last_response.text)
+
+    def _bulk_make_param(self, index, doctype, docid, op_type):
+        """Return the bulk format data."""
+        return json.dumps({op_type: {'_index': index, '_type': doctype, '_id': docid}}) + '\n'
+
+    def bulk_index(self, index, doctype, body, docid, op_type='index'):
+        """Bulk index the supplied document."""
+        data = self._bulk_make_param(index, doctype, docid, op_type) + json.dumps(body) + '\n'
+        self.bulk_data += data
+
+    def bulk_delete(self, index, doctype, docid):
+        """Bulk delete document from index."""
+        data = self._bulk_make_param(index, doctype, docid, 'delete')
+        self.bulk_data += data
+
+    def bulk_push(self):
+        """Make a raw HTTP bulk request to ElasticSearch.
+        Returns true if the index was deleted and false otherwise.
+
+        """
+        kwargs = { 'timeout': self.request_timeout }
+        url = self.es_url + '/_bulk'
+        kwargs['data'] = self.bulk_data
+        rescode = requests.request('post', url, **kwargs).status_code
+        self.bulk_data = ''
+        if 200 <= rescode < 300:
+            return True
+        return False
 
 if __name__ == '__main__':
     print "This is a library, it is not intended to be started by itself."
