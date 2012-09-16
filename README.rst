@@ -50,12 +50,6 @@ My target is to reach a stable 1.0 release in the coming months.
 Currently on the roadmap to reach a 1.0 release are:
 
 * Implementing most or even all the API methods
-* Implementing bulk indexing
-
-You may have noticed this software is labeled as alpha quality. I will not
-remove this label until I have done extensive testing and am convinced that
-most errors are handled cleanly. For normal usage this software works pretty
-well so don't be too frightened of the alpha label!
 
 License
 =======
@@ -64,7 +58,7 @@ Licensed under the New BSD License. See also the LICENSE file
 Credits
 =======
 This client library was written by Erik-Jan van Baaren (erikjan@gmail.com)
-
+Others have contributed bugfixes or extensions too (thanks!)
 The style of this library is inspired by `pyelasticsearch`_.
 
 Dependencies
@@ -75,6 +69,10 @@ Dependencies
 
 Changelog
 =========
+0.5.0
+-----
+* Added bulk API + unit tests (thanks to isnowfy)
+
 0.4.0
 -----
 * Added API method: index_exists
