@@ -70,11 +70,15 @@ The style of this library is inspired by `pyelasticsearch`_.
 Dependencies
 ============
 * ESClient uses the excellent *requests* library.
-* The unit tests only work on Python 2.7
-* The code is tested mostly on Python 2.7 too..
+* The unit tests only work on Python 2.7 (one test will fail on 2.6)
+* The code is tested mostly on Python 2.6 and 2.7
 
 Changelog
 =========
+0.4.0
+-----
+* Added API method: index_exists
+
 0.3.0
 -----
 * Better error handling (by using _parse_json_response() method everywhere)
