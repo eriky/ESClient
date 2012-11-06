@@ -10,8 +10,8 @@ python:
    - "pypy"
 
 install:
-   - pip install requests simplejson
    - if [[ $TRAVIS_PYTHON_VERSION == '2.5' ]]; then pip install chardet2 
+   - pip install requests simplejson
    - python setup.py install
 
 script: python test_esclient.py
