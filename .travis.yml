@@ -1,0 +1,14 @@
+language: python
+
+services: elasticsearch
+
+python:
+   - "2.5"
+   - "2.6"
+   - "2.7"
+   - "3.2"
+   - "pypy"
+
+install: pip install esclient
+
+script: python test_esclient.py
