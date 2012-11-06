@@ -10,7 +10,7 @@ python:
    - "pypy"
 
 install:
-   - if [[ $TRAVIS_PYTHON_VERSION == '2.5' ]]; then pip install chardet2 
+   - if [[ $TRAVIS_PYTHON_VERSION == '3.2' ]]; then pip install chardet2; fi 
    - pip install requests simplejson
    - python setup.py install
 
