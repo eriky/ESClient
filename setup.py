@@ -15,7 +15,7 @@ setup(name='ESClient',
         py_modules=['esclient'],
         license='New BSD license',
         keywords = ["elasticsearch"],
-        install_requires = ['requests'],
+        install_requires = ['requests >= 0.10.0'],
         classifiers=[
             'Development Status :: 4 - Beta',
             'Environment :: Web Environment',
