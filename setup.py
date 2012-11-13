@@ -6,7 +6,7 @@ with open('README.rst') as file:
     long_description = file.read()
 
 setup(name='ESClient',
-        version="0.5.2",
+        version="0.5.3",
         description='A lightweight Python client for ElasticSearch',
         author='Erik-Jan van Baaren',
         author_email='erikjan@gmail.com',
