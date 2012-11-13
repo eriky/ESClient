@@ -1,0 +1,17 @@
+language: python
+
+services: elasticsearch
+
+python:
+   - "2.5"
+   - "2.6"
+   - "2.7"
+   - "3.2"
+   - "pypy"
+
+install:
+   - if [[ $TRAVIS_PYTHON_VERSION == '3.2' ]]; then pip install chardet2; fi 
+   - pip install requests simplejson
+   - python setup.py install
+
+script: python test_esclient.py
