@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
-import esclient
 
 with open('README.rst') as file:
     long_description = file.read()

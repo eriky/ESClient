@@ -69,6 +69,15 @@ Dependencies
 
 Changelog
 =========
+0.5.2
+-----
+* fixed an issue where the dependency on the requests library was
+  not automatically procesed by easy_install / pip
+0.5.1
+-----
+* Refactored the bulk API to use more standard methods from ESClient
+* fixed some typos in code
+
 0.5.0
 -----
 * Added bulk API + unit tests (thanks to isnowfy)
