@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 __author__ = 'Erik-Jan van Baaren'
 __all__ = ['ESClient']
-__version__ = (0, 5, 0)
+__version__ = (0, 5, 1)
 
 
 def get_version():
@@ -23,7 +23,7 @@ class ESClientException(Exception):
 
 
 class ESClient:
-    """ESClient is a Python library that warps around the ElasticSearch
+    """ESClient is a Python library that wraps around the ElasticSearch
     REST API.
 
     ESClient methods will always return a hierachy of Python objects and not
@@ -295,6 +295,42 @@ class ESClient:
         return self.check_result(resp, 'found', True)
 
     """
+    Bulk API
+    """
+    def _bulk_make_param(self, index, doctype, docid, op_type):
+        """Return the bulk format data."""
+        return json.dumps({op_type: {'_index': index, '_type': doctype, '_id': docid}}) + '\n'
+
+    def bulk_index(self, index, doctype, body, docid, op_type='index'):
+        """Bulk index the supplied document. You can call this method repeatedly
+        to add actions to the bulk request and finally call bulk_push() to fire the
+        complete bulk request."""
+        data = self._bulk_make_param(index, doctype, docid, op_type) + json.dumps(body) + '\n'
+        self.bulk_data += data
+
+    def bulk_delete(self, index, doctype, docid):
+        """Bulk delete document from index. You can call this method repeatedly
+        to add actions to the bulk request and finally call bulk_push() to fire the
+        complete bulk request."""
+        data = self._bulk_make_param(index, doctype, docid, 'delete')
+        self.bulk_data += data
+
+    def bulk_push(self):
+        """Make a raw HTTP bulk request to ElasticSearch. All actions added with
+        bulk_index() and bulk_delete() will be send to ElasticSearch.
+        Returns true if the index was deleted and false otherwise.
+
+        """
+        path = self._make_path(['_bulk'])
+        self.send_request('POST', path, body=self.bulk_data, encode_json=False)
+        self.bulk_data = ''
+        rescode = self.last_response.status_code
+        if 200 <= rescode < 300:
+            return True
+        else:
+            return False
+
+    """
     Indices API
     """
     def create_index(self, index, body=None):
@@ -467,33 +503,6 @@ class ESClient:
         self.send_request('PUT', path=path, body=mapping)
         return self._parse_json_response(self.last_response.text)
 
-    def _bulk_make_param(self, index, doctype, docid, op_type):
-        """Return the bulk format data."""
-        return json.dumps({op_type: {'_index': index, '_type': doctype, '_id': docid}}) + '\n'
-
-    def bulk_index(self, index, doctype, body, docid, op_type='index'):
-        """Bulk index the supplied document."""
-        data = self._bulk_make_param(index, doctype, docid, op_type) + json.dumps(body) + '\n'
-        self.bulk_data += data
-
-    def bulk_delete(self, index, doctype, docid):
-        """Bulk delete document from index."""
-        data = self._bulk_make_param(index, doctype, docid, 'delete')
-        self.bulk_data += data
-
-    def bulk_push(self):
-        """Make a raw HTTP bulk request to ElasticSearch.
-        Returns true if the index was deleted and false otherwise.
-
-        """
-        kwargs = { 'timeout': self.request_timeout }
-        url = self.es_url + '/_bulk'
-        kwargs['data'] = self.bulk_data
-        rescode = requests.request('post', url, **kwargs).status_code
-        self.bulk_data = ''
-        if 200 <= rescode < 300:
-            return True
-        return False
 
 if __name__ == '__main__':
     print "This is a library, it is not intended to be started by itself."
