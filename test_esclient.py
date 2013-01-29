@@ -98,6 +98,27 @@ class TestESClient(unittest.TestCase):
                                 indexes=['contacts_esclient_test'])
         self.assertEqual(result['hits']['total'], 2)
 
+    def test_scan_scroll_api(self):
+        query_body= {
+            "query": {
+                "match_all": {}
+            }
+        }
+        scroll_id = self.es.scan(query_body=query_body, indexes=['contacts_esclient_test'], size=1)
+        
+        total_docs = 0
+        while True:
+            count = 0
+            res = self.es.scroll(scroll_id)
+            for hit in res['hits']['hits']:
+                total_docs += 1
+                count += 1
+            if count == 0:
+                break
+        
+        self.assertEqual(total_docs, 2)
+            
+            
     def test_deletebyquery_querystring_api(self):
         """Delete documents with a query using querystring option"""
         query_string_args = {

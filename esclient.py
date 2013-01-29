@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 __author__ = 'Erik-Jan van Baaren'
 __all__ = ['ESClient']
-__version__ = (0, 5, 3)
+__version__ = (0, 5, 4)
 
 
 def get_version():
@@ -124,7 +124,7 @@ class ESClient:
     def _search_operation(self, request_type, query_body=None,
                     operation_type="_search", query_string_args=None,
                     indexes=["_all"], doctypes=[]):
-        """Perform a search operation. This method can be use for search,
+        """Perform a search operation. This method can be used for search,
         delete by search and count.
 
         Searching in ElasticSearch can be done in two ways:
@@ -134,27 +134,18 @@ class ESClient:
         You can choose one, but not both at the same time.
 
         """
-        if query_body and query_string_args:
-            raise ESClientException("Found both a query body and query" +
-                                    "arguments")
+        #if query_body and query_string_args:
+        #    raise ESClientException("Found both a query body and query" +
+        #                            "arguments")
 
+                
         indexes = ','.join(indexes)
         doctypes = ','.join(doctypes)
         path = self._make_path([indexes, doctypes, operation_type])
 
-        if query_body:
-            self.send_request(request_type, path, body=query_body)
-        elif query_string_args:
-            self.send_request(request_type, path,
-                              query_string_args=query_string_args)
-        elif operation_type == "_count":
-            # If both options were not used, there one more option left: no
-            # query at all. A query is optional when counting, so we fire a
-            # request to the URL without a query only in this specific case.
-            self.send_request('GET', path)
-        else:
-            raise ESClientException("Mandatory query was not supplied")
-
+        self.send_request(request_type, path, body=query_body, 
+                            query_string_args=query_string_args)
+                            
         try:
             return self._parse_json_response(self.last_response.text)
         except:
@@ -208,7 +199,48 @@ class ESClient:
                 query_string_args=query_string_args, indexes=indexes,
                 doctypes=doctypes)
 
+    def scan(self, query_body=None, query_string_args=None,
+              indexes=["_all"], doctypes=[], scroll="10m", size=50):
+        """Perform a scan search.
+        
+        The scan search type allows to efficiently scroll a large result
+        set. This method returns a scroll_id, which can be used to get
+        more results with the scroll(id=scroll_id) method.
+        
+        """
+        if not query_string_args:
+            query_string_args = {}
+        
+        query_string_args["search_type"] = "scan"
+        query_string_args["scroll"] = scroll
+        query_string_args["size"] = size
+        
+        result = self._search_operation('GET', query_body=query_body,
+                query_string_args=query_string_args, indexes=indexes,
+                doctypes=doctypes)
+        
+        return result["_scroll_id"]
 
+    def scroll(self, scroll_id, scroll_time="10m"):
+        """Get the next batch of results from a scan search.
+        
+        ElasticSearch will return a new scroll_id to you after every
+        call to scoll.
+        A scroll has ended when you get no more resulst from ElasticSeach.
+        
+        Options:
+        scroll_id -- the scroll id as returned by the scan method
+        
+        """
+        query_string_args = {}
+        query_string_args["scroll"] = scroll_time
+        body = scroll_id
+        
+        self.send_request('GET', '/_search/scroll', body=body, 
+                query_string_args=query_string_args, encode_json=False)
+                
+        return json.loads(self.last_response.text)
+        
     def delete_by_query(self, query_body=None, query_string_args=None,
                 indexes=["_all"], doctypes=[]):
         """Delete based on a search operation.

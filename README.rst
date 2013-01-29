@@ -69,10 +69,20 @@ Dependencies
 
 Changelog
 =========
+0.5.4
+-----
+* Added two methods: scan and scroll. With these methods you can now perform
+  scan queries and scroll through the results.
+  
+0.5.3
+-----
+* Bugfixing
+
 0.5.2
 -----
 * fixed an issue where the dependency on the requests library was
   not automatically procesed by easy_install / pip
+
 0.5.1
 -----
 * Refactored the bulk API to use more standard methods from ESClient
