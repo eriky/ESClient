@@ -4,6 +4,10 @@ ESClient
 ESClient is a Python library that uses the ElasticSearch REST API. It is meant
 to be lightweight and be *close to the actual REST API* in terms of usage.
 
+With ESClient comes two script that are installed in your /usr/local/bin:
+esdump -- Use this script to dump one or more indexes to a file (or stdout)
+esimport -- Use this script to import a dump into an index
+
 :Web: http://pypi.python.org/pypi/ESClient/
 :Download: http://pypi.python.org/pypi/ESClient/
 :Source: https://github.com/eriky/ESClient/
@@ -69,6 +73,11 @@ Dependencies
 
 Changelog
 =========
+0.5.5
+-----
+* Added esdump script, which can dump indexes to a (optionally compressed) file or stdout
+  by using the new scan and scroll methods
+
 0.5.4
 -----
 * Added two methods: scan and scroll. With these methods you can now perform
