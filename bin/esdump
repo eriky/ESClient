@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+
+import esclient
+import json
+import argparse
+
+parser = argparse.ArgumentParser(description="Dump one or more ElasticSearch" +
+" indexes to stdout. This tool will dump all the _source fields. If you chose"+
+" not to store the _source field, you can not make backups of your index(es)"+
+" with this tool.")
+
+parser.add_argument('--url', '-u', required=True, help="The full URL to the ElasticSearch server, including port")
+parser.add_argument('--file', '-f', required=True, type=argparse.FileType('wb', 8192), default="-", help="The output file to dump to. By default esdump will dump to stdout.")
+parser.add_argument('--indexes', '-i', nargs='+', help="One or more index names to dump, may also be aliases. If none specified, ALL indexes are dumped.")
+arguments = parser.parse_args()
+
+if not arguments.indexes:
+    print "You did not specify an index with the -i/--indexes option. Dumping ALL indexes."
+    indexes = ['_all']
+else:
+    indexes = arguments.indexes
+    
+es = esclient.ESClient(arguments.url)
+print type(arguments.indexes)
+query_body = { "query": { "match_all": {} } }
+
+scroll_id = es.scan(query_body = query_body, indexes = indexes)
+
+while True:
+    scrollres = es.scroll(scroll_id)
+    # get next scroll_id
+    scroll_id = scrollres["_scroll_id"]
+    
+    hits = scrollres["hits"]["hits"]
+
+    num_results = 0
+    for hit in scrollres["hits"]["hits"]:
+        print json.dumps(hit["_source"])
+        num_results += 1
+
+    # See if we reached the end of the data
+    if num_results == 0:
+        break

@@ -124,20 +124,18 @@ class ESClient:
     def _search_operation(self, request_type, query_body=None,
                     operation_type="_search", query_string_args=None,
                     indexes=["_all"], doctypes=[]):
-        """Perform a search operation. This method can be used for search,
-        delete by search and count.
+        """Perform a search operation. This method can be used for search and
+        counting by using the operation types:
+            _search, _count
+            
+        Note that you can also count with more options by using ElasticSearch's
+        search_type=count, which is not yet implemented in ESClient
 
         Searching in ElasticSearch can be done in two ways:
         1) with a query string, by providing query_args
-        2) using a full query body (JSON) by providing
-        the query_body.
-        You can choose one, but not both at the same time.
+        2) using a full query body (JSON) by providing the query_body
 
         """
-        #if query_body and query_string_args:
-        #    raise ESClientException("Found both a query body and query" +
-        #                            "arguments")
-
                 
         indexes = ','.join(indexes)
         doctypes = ','.join(doctypes)
@@ -195,6 +193,9 @@ class ESClient:
         You can choose one, but not both at the same time.
 
         """
+        if query_body and query_string_args:
+            raise ESClientException("Both query_body and query_string_args" +
+            "provided, please use only on at a time")
         return self._search_operation('GET', query_body=query_body,
                 query_string_args=query_string_args, indexes=indexes,
                 doctypes=doctypes)
