@@ -7,15 +7,15 @@ with open('README.rst') as file:
 
 setup(name='ESClient',
         version="0.5.5",
-        description='A lightweight Python client for ElasticSearch',
+        description='A lightweight Python client for ElasticSearch, including a dump and import tool for indexes',
         author='Erik-Jan van Baaren',
         author_email='erikjan@gmail.com',
         url='https://github.com/eriky/ESClient',
         py_modules=['esclient'],
         license='New BSD license',
         keywords = ["elasticsearch"],
-        install_requires = ['requests >= 0.10.0'],
-        scripts = ['bin/esdump'],
+        requires = ['requests (>= 0.10.0)'],
+        scripts = ['bin/esdump', 'bin/esimport'],
         classifiers=[
             'Development Status :: 4 - Beta',
             'Environment :: Web Environment',
