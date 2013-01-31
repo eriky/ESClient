@@ -37,7 +37,7 @@ elif arguments.gzip and arguments.file:
     import gzip
     f = gzip.open(arguments.file, 'wb')
 elif arguments.file:
-    f = open(arguments.file, "rw")
+    f = open(arguments.file, "w")
 else:
     if arguments.bzip2 or arguments.gzip:
         sys.stderr.write("This tool will not write compressed output to stdout. You can however pipe the output through gzip or bzip2 to compress the data.\n")
@@ -61,7 +61,7 @@ while True:
 
     num_results = 0
     for hit in scrollres["hits"]["hits"]:
-        f.write(json.dumps(hit["_source"]))
+        f.write(json.dumps(hit))
         f.write('\n')
         num_results += 1
 

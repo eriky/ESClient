@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+
+# Copyright 2012 Erik-Jan van Baaren (erikjan@gmail.com)
+# This tool is released as part of the python package ESClient which can be found on PyPI.org.
+
+import esclient
+import argparse
+import sys
+import json
+
+parser = argparse.ArgumentParser(description="Import a dump from esdump, optionally overriding the index name and document type." +
+" This tool will auto-detect the file type (plain, gz, bzip2) based on the file extension." +
+" !! Please note that you have to create the appropriate mappings yourself !!")
+
+parser.add_argument('--url', '-u', required=True, help="The full URL to the ElasticSearch server, including port")
+parser.add_argument('--file', '-f', required=False, help="The input file to read from. By default esimport will read from stdin")
+parser.add_argument('--index', '-i', required=False, help="Override the index where data will end up")
+parser.add_argument('--doctype', '-t', required=False, help="Override the document type")
+arguments = parser.parse_args()
+
+es = esclient.ESClient(arguments.url)
+
+if arguments.file:
+    file_lower = arguments.file.lower()
+    if file_lower.endswith(".gz"):
+        import gzip
+        f = gzip.open(arguments.file, "rb")
+    elif file_lower.endswith(".bz2"):
+        import bz2
+        f = bz2.BZ2File(arguments.file, "rb")
+    else:
+        f = open(arguments.file, "r")
+else:
+    # use stdin as a file
+    f = sys.stdin
+
+counter = 0
+for doc in f:
+    doc = json.loads(doc)
+    
+    if arguments.index:
+        index = arguments.index
+    else:
+        index = doc["_index"]
+    
+    if arguments.doctype:
+        doctype = arguments.doctype
+    else:
+        doctype = doc["_type"]
+    
+    es.index(index, doctype, doc["_source"], docid=doc["_id"])
+    counter += 1
+
+print "Indexed %d documents into index %s, with doctype %s" % (counter, arguments.index, arguments.doctype)
+f.close()
