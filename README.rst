@@ -53,13 +53,15 @@ If you find a bug or any other issue you may create an issue on GitHub!
 
 https://github.com/eriky/ESClient/issues
 
-Roadmap
-=======
+Roadmap / TODO
+==============
 My target is to reach a stable 1.0 release. Currently on the roadmap to reach
 such a 1.0 release are:
 
 * Implementing most or even all the API methods
 * Adding support for backing up the mappings with esdump and esimport
+* Adding option to esdump to save data into multiple files, with names based 
+  on the name of the source index
 
 License
 =======
