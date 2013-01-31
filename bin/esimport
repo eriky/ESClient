@@ -48,8 +48,11 @@ for doc in f:
     else:
         doctype = doc["_type"]
     
-    es.index(index, doctype, doc["_source"], docid=doc["_id"])
-    counter += 1
+    if not es.index(index, doctype, doc["_source"], docid=doc["_id"]):
+        sys.stderr.write("Error occured while indexing documents, stopping!\n");
+        sys.exit(1)
+    else:
+        counter += 1
 
-print "Indexed %d documents into index %s, with doctype %s" % (counter, arguments.index, arguments.doctype)
 f.close()
+print "Indexing of %d documents completed" % (counter)
