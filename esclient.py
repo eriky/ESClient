@@ -154,16 +154,19 @@ class ESClient:
     # The API methods
     #
 
-    def index(self, index, doctype, body, docid=None, op_type=None):
+    def index(self, index, doctype, body, docid=None, op_type=None, parent=None, routing=None):
         """Index the supplied document.
 
         Options:
         index -- the index name (e.g. twitter)
         doctype -- the document types (e.g. tweet)
-        op_type -- "create" or None:
+        body -- the body of this document
+        docid -- optional document id, ElasticSearch will generate one for you if not provided
+        op_type -- optional: "create" or None:
             "create": create document only if it does not exists already
             None: create document or update an existing document
-
+        parent -- the optional parent id of this documents
+        routing -- the optional routing of this document
         Returns True on success (document added/updated or already exists
         while using op_type="create") or False in all other instances.
 
@@ -171,6 +174,13 @@ class ESClient:
         args = dict()
         if op_type:
             args["op_type"] = op_type
+        
+        if parent:
+            args["parent"] = parent
+
+        if routing:
+            args["routing"] = routing
+
         path = self._make_path([index, doctype, docid])
         self.send_request('POST', path, body=body, query_string_args=args)
         rescode = self.last_response.status_code
