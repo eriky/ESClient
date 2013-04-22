@@ -1,12 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 
-# Copyright 2012 Erik-Jan van Baaren (erikjan@gmail.com)
-# This tool is released as part of the python package ESClient which can be found on PyPI.org.
+# Copyright 2012-2013 Erik-Jan van Baaren (erikjan@gmail.com)
+# This tool is released as part of the python package ESClient which can be found on PyPI.org
+# or on github at https://github.com/eriky/ESClient
 
 import esclient
 import json
 import argparse
 import sys
+
 
 parser = argparse.ArgumentParser(description="Dump one or more ElasticSearch" +
 " indexes to stdout. This tool will dump all the _source fields. If you chose"+
@@ -18,6 +20,8 @@ parser.add_argument('--file', '-f', required=False, help="The output file to dum
 parser.add_argument('--indexes', '-i', nargs='+', help="One or more index names to dump, may also be aliases. If none specified, ALL indexes are dumped.")
 parser.add_argument('--gzip', '-z', action="store_true", help="Use gzip to compress the output")
 parser.add_argument('--bzip2', '-b', action="store_true", help="Use bzip2 to compress the output")
+parser.add_argument('--stored-fields', '-s', nargs='+', help="A list of fields that you want to include in the backup (_source, _id, _parent and _routing are included automatically")
+
 arguments = parser.parse_args()
 
 if not arguments.indexes:
@@ -48,9 +52,17 @@ else:
     
 es = esclient.ESClient(arguments.url)
 
-query_body = { "query": { "match_all": {} } }
+# Get the fields that the user wants to backup in addition to the system fields as listed below
+fields = set(["_parent", "_routing", "_source"])
+if arguments.stored_fields:
+    for field in arguments.stored_fields:
+        fields.add(field)
+fields = list(fields)
 
+query_body = { "query": { "match_all": {} }, "fields": fields }
 scroll_id = es.scan(query_body = query_body, indexes = indexes)
+
+indexes = set()
 
 while True:
     scrollres = es.scroll(scroll_id)
@@ -63,6 +75,9 @@ while True:
     for hit in scrollres["hits"]["hits"]:
         # Delete this field, since it is useless for restore purposes
         del(hit["_score"])
+        if hit["_index"] not in indexes:
+            indexes.add(hit["_index"])
+
         f.write(json.dumps(hit))
         f.write('\n')
         num_results += 1
@@ -70,5 +85,7 @@ while True:
     # See if we reached the end of the data
     if num_results == 0:
         break
+# TODO
+# write_mappings(indexes)
 
 f.close()
