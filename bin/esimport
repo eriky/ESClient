@@ -8,8 +8,8 @@ import argparse
 import sys
 import json
 
-parser = argparse.ArgumentParser(description="Import a dump from esdump, optionally overriding the index name and document type." +
-" This tool will auto-detect the file type (plain, gz, bzip2) based on the file extension." +
+parser = argparse.ArgumentParser(description="Import a dump from esdump, optionally overriding the index name and/or document type." +
+" This tool will auto-detect the file type (plain, gz, bzip2) based on the file extension.\n" +
 " !! Please note that you have to create the appropriate mappings yourself !!")
 
 parser.add_argument('--url', '-u', required=True, help="The full URL to the ElasticSearch server, including port")
