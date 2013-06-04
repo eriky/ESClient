@@ -546,6 +546,14 @@ class ESClient:
         self.send_request('PUT', path=path, body=mapping)
         return self._parse_json_response(self.last_response.text)
 
+    #Cluster related API
+
+    def get_health(self, indexes=[]):
+        path = self._make_path(['_cluster', 'health', ','.join(indexes)])
+        self.send_request('GET', path=path)
+        resp = json.loads(self.last_response.text)
+        return resp["status"]
+
 
 if __name__ == '__main__':
     print "This is a library, it is not intended to be started by itself."
