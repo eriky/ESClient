@@ -47,8 +47,17 @@ for doc in f:
         doctype = arguments.doctype
     else:
         doctype = doc["_type"]
-    
-    if not es.index(index, doctype, doc["_source"], docid=doc["_id"]):
+    try:    
+        parent = doc["_parent"]
+    except KeyError:
+        parent = None
+
+    try:
+        routing = doc["_routing"]
+    except KeyError:
+        routing = None
+
+    if not es.index(index, doctype, doc["_source"], docid=doc["_id"], parent=parent, routing=routing):
         sys.stderr.write("Error occured while indexing documents, stopping!\n");
         sys.exit(1)
     else:

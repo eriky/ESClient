@@ -6,7 +6,7 @@ with open('README.rst') as file:
     long_description = file.read()
 
 setup(name='ESClient',
-        version="0.5.5",
+        version="0.5.6",
         description='A lightweight Python client for ElasticSearch, including a dump and import tool for indexes',
         author='Erik-Jan van Baaren',
         author_email='erikjan@gmail.com',
@@ -14,7 +14,7 @@ setup(name='ESClient',
         py_modules=['esclient'],
         license='New BSD license',
         keywords = ["elasticsearch"],
-        requires = ['requests (>= 0.10.0)'],
+        install_requires = ['requests'],
         scripts = ['bin/esdump', 'bin/esimport'],
         classifiers=[
             'Development Status :: 4 - Beta',

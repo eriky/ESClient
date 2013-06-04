@@ -33,6 +33,10 @@ if arguments.bzip2 and arguments.gzip:
     sys.stderr.write("Invalid combination of options: I can write either bzip2 or gzip, not both.\n")
     sys.exit(1)
  
+es = esclient.ESClient(arguments.url)
+
+# TODO: check cluster state before continuing
+
 # Open a file to write to, based on the arguments given 
 if arguments.bzip2 and arguments.file:
     import bz2
@@ -50,7 +54,6 @@ else:
         # use stdout as a file
         f = sys.stdout
     
-es = esclient.ESClient(arguments.url)
 
 # Get the fields that the user wants to backup in addition to the system fields as listed below
 fields = set(["_parent", "_routing", "_source"])
