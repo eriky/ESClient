@@ -1,10 +1,16 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
+from sys import version_info
 
 with open('README.rst') as file:
     long_description = file.read()
 
+install_requires = ['requests']
+
+if not (version_info.major == 2 and version_info.minor >=7):
+    install_requires.append('argparse')
+    
 setup(name='ESClient',
         version="0.5.6",
         description='A lightweight Python client for ElasticSearch, including a dump and import tool for indexes',
@@ -14,7 +20,7 @@ setup(name='ESClient',
         py_modules=['esclient'],
         license='New BSD license',
         keywords = ["elasticsearch"],
-        install_requires = ['requests'],
+        install_requires = install_requires,
         scripts = ['bin/esdump', 'bin/esimport'],
         classifiers=[
             'Development Status :: 4 - Beta',
