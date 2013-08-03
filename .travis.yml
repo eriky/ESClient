@@ -11,7 +11,7 @@ python:
 
 install:
    - if [[ $TRAVIS_PYTHON_VERSION == '3.2' ]]; then pip install chardet2; fi 
-   - pip install requests simplejson
+   - pip install requests simplejson argparse
    - python setup.py install
 
 script: python test_esclient.py

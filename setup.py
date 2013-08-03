@@ -8,7 +8,7 @@ with open('README.rst') as file:
 
 install_requires = ['requests']
 
-if not (version_info.major == 2 and version_info.minor >=7):
+if version_info < (2,7):
     install_requires.append('argparse')
     
 setup(name='ESClient',
