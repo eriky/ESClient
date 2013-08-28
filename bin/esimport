@@ -16,6 +16,8 @@ parser.add_argument('--url', '-u', required=True, help="The full URL to the Elas
 parser.add_argument('--file', '-f', required=False, help="The input file to read from. By default esimport will read from stdin")
 parser.add_argument('--index', '-i', required=False, help="Override the index where data will end up")
 parser.add_argument('--doctype', '-t', required=False, help="Override the document type")
+parser.add_argument('--recreate', '-r', required=False, action='store_true', help="Delete and create the index again")
+parser.add_argument('--mappingfile', '-m', required=False, help="The mapping file for the index")
 arguments = parser.parse_args()
 
 es = esclient.ESClient(arguments.url)
@@ -34,6 +36,32 @@ else:
     # use stdin as a file
     f = sys.stdin
 
+def fail_exit(msg):
+    sys.stderr.write(msg + "\n")
+    sys.exit(1)
+
+if arguments.recreate:
+    if not arguments.index:
+        fail_exit("index argument is required when recreate is given")
+
+    delete_result = es.delete_index(arguments.index)
+
+    create_result = es.create_index(arguments.index)
+    if not create_result:
+        fail_exit("create index failed")
+
+if arguments.mappingfile:
+    mapping_file = open(arguments.mappingfile, "r")
+    mappings = json.load(mapping_file)
+    types = mappings.itervalues().next()
+
+    for elastic_type, mapping in types.iteritems():
+        mapping_obj = { elastic_type : mapping }
+        put_mapping_result = es.put_mapping(mapping_obj, elastic_type, [arguments.index])
+
+        if 'error' in put_mapping_result:
+            fail_exit("put mapping failed: "+ str(put_mapping_result['error']))
+
 counter = 0
 for doc in f:
     doc = json.loads(doc)
@@ -47,6 +75,7 @@ for doc in f:
         doctype = arguments.doctype
     else:
         doctype = doc["_type"]
+
     try:    
         parent = doc["_parent"]
     except KeyError:
@@ -58,8 +87,7 @@ for doc in f:
         routing = None
 
     if not es.index(index, doctype, doc["_source"], docid=doc["_id"], parent=parent, routing=routing):
-        sys.stderr.write("Error occured while indexing documents, stopping!\n");
-        sys.exit(1)
+        fail_exit("Error occured while indexing documents, stopping!");
     else:
         counter += 1
 

@@ -17,10 +17,12 @@ parser = argparse.ArgumentParser(description="Dump one or more ElasticSearch" +
 
 parser.add_argument('--url', '-u', required=True, help="The full URL to the ElasticSearch server, including port")
 parser.add_argument('--file', '-f', required=False, help="The output file to dump to. By default esdump will dump to stdout.")
+parser.add_argument('--mappingfile', '-m', required=False, help="The mapping file to dump to. By default esdump will not save mapping.")
 parser.add_argument('--indexes', '-i', nargs='+', help="One or more index names to dump, may also be aliases. If none specified, ALL indexes are dumped.")
 parser.add_argument('--gzip', '-z', action="store_true", help="Use gzip to compress the output")
 parser.add_argument('--bzip2', '-b', action="store_true", help="Use bzip2 to compress the output")
 parser.add_argument('--stored-fields', '-s', nargs='+', help="A list of fields that you want to include in the backup (_source, _id, _parent and _routing are included automatically")
+parser.add_argument('--count', '-c', action="store_true", help="Only print the document count")
 
 arguments = parser.parse_args()
 
@@ -36,6 +38,9 @@ if arguments.bzip2 and arguments.gzip:
 es = esclient.ESClient(arguments.url)
 
 # TODO: check cluster state before continuing
+def fail_exit(msg):
+    sys.stderr.write(msg + "\n")
+    sys.exit(1)
 
 # Open a file to write to, based on the arguments given 
 if arguments.bzip2 and arguments.file:
@@ -48,12 +53,35 @@ elif arguments.file:
     f = open(arguments.file, "w")
 else:
     if arguments.bzip2 or arguments.gzip:
-        sys.stderr.write("This tool will not write compressed output to stdout. You can however pipe the output through gzip or bzip2 to compress the data.\n")
-        sys.exit(1)
+        fail_exit("This tool will not write compressed output to stdout. You can however pipe the output through gzip or bzip2 to compress the data.")
     else:    
         # use stdout as a file
         f = sys.stdout
-    
+
+if (arguments.count):
+    if len(indexes) != 1:
+        fail_exit("You cannot use zero or multiple indexes when count is given.")
+
+    count_result = es.count(None, None, arguments.indexes)
+    if not 'count' in count_result:
+        fail_exit("You cannot use zero or multiple indexes when count is given.")
+
+    print str(count_result['count'])
+    sys.exit(0)
+
+if (arguments.mappingfile):
+    if len(indexes) != 1:
+        fail_exit("You cannot use zero or multiple indexes when using mapping file.")
+
+    mappingfile = open(arguments.mappingfile, "w")
+    mapping = es.get_mapping(indexes)
+
+    if 'error' in mapping:
+        raise Exception("Mapping file contains error: " + str(mapping['error']))
+
+    mappingfile.write(json.dumps(mapping))
+    mappingfile.close()
+
 
 # Get the fields that the user wants to backup in addition to the system fields as listed below
 fields = set(["_parent", "_routing", "_source"])

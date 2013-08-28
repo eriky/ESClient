@@ -1,5 +1,5 @@
 import requests
-from urllib import urlencode
+from urllib import urlencode, quote_plus
 from pprint import pprint
 
 try:
@@ -58,6 +58,7 @@ class ESClient:
 
         """
         path_components = map(str, filter(None, path_components))
+        path_components = map(quote_plus, path_components)
         path = '/'.join(path_components)
         if not path.startswith('/'):
             path = '/' + path
