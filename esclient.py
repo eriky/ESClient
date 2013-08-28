@@ -18,6 +18,10 @@ def get_version():
         return "%s.%s.%s" % __version__
 
 
+def _utf8_encode(component):
+    return component.encode("utf-8")
+
+
 class ESClientException(Exception):
     pass
 
@@ -57,7 +61,7 @@ class ESClient:
         ignored.
 
         """
-        path_components = map(str, filter(None, path_components))
+        path_components = map(_utf8_encode, filter(None, path_components))
         path_components = map(quote_plus, path_components)
         path = '/'.join(path_components)
         if not path.startswith('/'):
