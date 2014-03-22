@@ -12,6 +12,7 @@ class TestESClient(unittest.TestCase):
         """Delete the test schema, if any. This will prevent any errors
         due to the schema already existing """
         self.es.delete_index("contacts_esclient_test")
+        self.es.delete_index("contacts_esclient_test2")
 
     def setUp(self):
         """ Create a test schema once """
@@ -23,7 +24,9 @@ class TestESClient(unittest.TestCase):
         }
         self.assertTrue(self.es.create_index('contacts_esclient_test', body))
         self.assertFalse(self.es.create_index('contacts_esclient_test', body))
+
         self.assertTrue(self.es.create_index('contacts_esclient_test2', body))
+        self.assertFalse(self.es.create_index('contacts_esclient_test2', body))
 
 
         """ Index some test data """
