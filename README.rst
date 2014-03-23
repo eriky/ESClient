@@ -1,7 +1,9 @@
-Note: ElasticSearch now has an official Python clients. For new projects, I strongly recommend you to use it. ##
-====
+====================================
+WARNING: There is an official client
+====================================
+ElasticSearch now has an official Python API. For new projects, I strongly recommend you to use it.
 
-You can install the official client with:
+You can install the official API with:
     $ easy_install elasticsearch
 
 Check out http://www.elasticsearch.org/guide/en/elasticsearch/client/python-api/current/index.html for more info.
