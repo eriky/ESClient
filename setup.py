@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
+
 from sys import version_info
 
 with open('README.rst') as file:

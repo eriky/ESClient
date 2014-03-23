@@ -1,5 +1,10 @@
+from __future__ import print_function
 import requests
-from urllib import urlencode, quote_plus
+try:
+    from urllib import urlencode, quote_plus
+except ImportError:
+    from urllib.parse import urlencode, quote_plus
+
 from pprint import pprint
 
 try:
@@ -561,4 +566,4 @@ class ESClient:
 
 
 if __name__ == '__main__':
-    print "This is a library, it is not intended to be started by itself."
+    print("This is a library, it is not intended to be started by itself.")
