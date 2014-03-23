@@ -1,12 +1,15 @@
-language: python
+language:
+   - python
 
-services: elasticsearch
+services:
+   - elasticsearch
 
 python:
-   - "2.5"
    - "2.6"
    - "2.7"
    - "3.2"
+   - "3.3"
+   - "3.4"
    - "pypy"
 
 install:
@@ -14,4 +17,5 @@ install:
    - pip install requests simplejson argparse
    - python setup.py install
 
-script: python test_esclient.py
+script:
+   - python test_esclient.py
