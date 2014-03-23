@@ -4,6 +4,7 @@ You can install the official client with:
     $ easy_install elasticsearch
 
 Check out http://www.elasticsearch.org/guide/en/elasticsearch/client/python-api/current/index.html for more info.
+
 ========
 ESClient
 ========
