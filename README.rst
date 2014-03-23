@@ -1,4 +1,5 @@
-## Note: ElasticSearch now has an official Python clients. For new projects, I strongly recommend you to use it. ##
+Note: ElasticSearch now has an official Python clients. For new projects, I strongly recommend you to use it. ##
+====
 
 You can install the official client with:
     $ easy_install elasticsearch
