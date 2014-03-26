@@ -65,11 +65,19 @@ class TestESClient(unittest.TestCase):
 
         """ Ensure that the document has really been indexed """
         result = self.es.get('contacts_esclient_test', 'person', 3)
-        self.assertTrue(result['found'])
+        try:
+            found = result['exists']
+        except KeyError:
+            found = result['found']
+        self.assertTrue(found)
 
     def test_get_api(self):
         result = self.es.get('contacts_esclient_test', 'person', 1)
-        self.assertTrue(result['found'])
+        try:
+            found = result['exists']
+        except KeyError:
+            found = result['found']
+        self.assertTrue(found)
 
     def test_mget_api(self):
         """docstring for test_mget_api"""
