@@ -94,7 +94,11 @@ class ESClient:
         otherwise.
         """
         if key in results:
+            log.debug("Key %s found in response %s" % (key, results))
             return results[key] == value
+        else:
+            log.debug("Key %s not found in response %s" % (key, results))
+            return False
 
     def send_request(self, method, path, body=None, query_string_args={},encode_json=True):
         """Make a raw HTTP request to ElasticSearch.
@@ -130,6 +134,7 @@ class ESClient:
                                     method.upper())
 
         self.last_response = requests.request(method.lower(), url, **kwargs)
+        log.debug(self.last_response)
 
     def _search_operation(self, request_type, query_body=None,
                     operation_type="_search", query_string_args=None,
@@ -137,7 +142,7 @@ class ESClient:
         """Perform a search operation. This method can be used for search and
         counting by using the operation types:
             _search, _count
-            
+
         Note that you can also count with more options by using ElasticSearch's
         search_type=count, which is not yet implemented in ESClient
 
@@ -146,14 +151,14 @@ class ESClient:
         2) using a full query body (JSON) by providing the query_body
 
         """
-                
+
         indexes = ','.join(indexes)
         doctypes = ','.join(doctypes)
         path = self._make_path([indexes, doctypes, operation_type])
 
-        self.send_request(request_type, path, body=query_body, 
+        self.send_request(request_type, path, body=query_body,
                             query_string_args=query_string_args)
-                            
+
         try:
             return self._parse_json_response(self.last_response.text)
         except:
@@ -184,14 +189,14 @@ class ESClient:
         args = dict()
         if op_type:
             args["op_type"] = op_type
-        
+
         if parent:
             args["parent"] = parent
 
         if routing:
             args["routing"] = routing
 
-        path = self._make_path([index, doctype, docid])
+        path = self._make_path([index, doctype, str(docid)])
         self.send_request('POST', path, body=body, query_string_args=args)
         rescode = self.last_response.status_code
         if 200 <= rescode < 300:
@@ -223,45 +228,45 @@ class ESClient:
     def scan(self, query_body=None, query_string_args=None,
               indexes=["_all"], doctypes=[], scroll="10m", size=50):
         """Perform a scan search.
-        
+
         The scan search type allows to efficiently scroll a large result
         set. This method returns a scroll_id, which can be used to get
         more results with the scroll(id=scroll_id) method.
-        
+
         """
         if not query_string_args:
             query_string_args = {}
-        
+
         query_string_args["search_type"] = "scan"
         query_string_args["scroll"] = scroll
         query_string_args["size"] = size
-        
+
         result = self._search_operation('GET', query_body=query_body,
                 query_string_args=query_string_args, indexes=indexes,
                 doctypes=doctypes)
-        
+
         return result["_scroll_id"]
 
     def scroll(self, scroll_id, scroll_time="10m"):
         """Get the next batch of results from a scan search.
-        
+
         ElasticSearch will return a new scroll_id to you after every
         call to scoll.
         A scroll has ended when you get no more resulst from ElasticSeach.
-        
+
         Options:
         scroll_id -- the scroll id as returned by the scan method
-        
+
         """
         query_string_args = {}
         query_string_args["scroll"] = scroll_time
         body = scroll_id
-        
-        self.send_request('GET', '/_search/scroll', body=body, 
+
+        self.send_request('GET', '/_search/scroll', body=body,
                 query_string_args=query_string_args, encode_json=False)
-                
+
         return json.loads(self.last_response.text)
-        
+
     def delete_by_query(self, query_body=None, query_string_args=None,
                 indexes=["_all"], doctypes=[]):
         """Delete based on a search operation.
@@ -306,7 +311,7 @@ class ESClient:
             fields = ",".join(fields)
             args['fields'] = fields
 
-        path = self._make_path([index, doctype, docid])
+        path = self._make_path([index, doctype, str(docid)])
         self.send_request('GET', path, query_string_args=args)
         return self._parse_json_response(self.last_response.text)
 
@@ -336,13 +341,13 @@ class ESClient:
         self.send_request('GET', path, body=body)
         return self._parse_json_response(self.last_response.text)
 
-    def delete(self, index, doctype, id):
+    def delete(self, index, doctype, docid):
         """Delete document from index.
 
         Returns true if the document was found and false otherwise.
 
         """
-        path = self._make_path([index, doctype, id])
+        path = self._make_path([index, doctype, str(docid)])
         self.send_request('DELETE', path)
         resp = json.loads(self.last_response.text)
         return self.check_result(resp, 'found', True)
@@ -429,8 +434,7 @@ class ESClient:
         """
         path = self._make_path([index, '_refresh'])
         self.send_request('POST', path)
-        resp = json.loads(self.last_response.text)
-        return self.check_result(resp, 'ok', True)
+        return True
 
     def create_alias(self, alias, indexes):
         """Create an alias for one or more indexes.
@@ -481,7 +485,7 @@ class ESClient:
         path = self._make_path([index, '_open'])
         self.send_request('POST', path)
         resp = json.loads(self.last_response.text)
-        return self.check_result(resp, 'ok', True)
+        return self.check_result(resp, 'acknowledged', True)
 
     def close_index(self, index):
         """Close an index. A closed index has almost no overhead on the
@@ -493,7 +497,7 @@ class ESClient:
         path = self._make_path([index, '_close'])
         self.send_request('POST', path)
         resp = json.loads(self.last_response.text)
-        return self.check_result(resp, 'ok', True)
+        return self.check_result(resp, 'acknowledged', True)
 
     def status(self, indexes=['_all']):
         """Retrieve the status of one or more indices.
@@ -518,8 +522,7 @@ class ESClient:
         if refresh:
             args['refresh'] = "true"
         self.send_request('POST', path, query_string_args=args)
-        resp = json.loads(self.last_response.text)
-        return self.check_result(resp, 'ok', True)
+        return True
 
     def get_mapping(self, indexes=['_all'], doctypes=[]):
         """Get mapping(s).
