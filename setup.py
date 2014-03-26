@@ -16,7 +16,7 @@ if version_info < (2,7):
     install_requires.append('argparse')
 
 setup(name='ESClient',
-        version="0.5.7",
+        version="0.5.8",
         description='A lightweight Python client for ElasticSearch, including a dump and import tool for indexes',
         author='Erik-Jan van Baaren',
         author_email='erikjan@gmail.com',
