@@ -77,12 +77,12 @@ for doc in f:
         doctype = doc["_type"]
 
     try:    
-        parent = doc["_parent"]
+        parent = doc["fields"]["_parent"]
     except KeyError:
         parent = None
 
     try:
-        routing = doc["_routing"]
+        routing = doc["fields"]["_routing"]
     except KeyError:
         routing = None
 
