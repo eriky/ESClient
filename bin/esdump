@@ -23,6 +23,8 @@ parser.add_argument('--gzip', '-z', action="store_true", help="Use gzip to compr
 parser.add_argument('--bzip2', '-b', action="store_true", help="Use bzip2 to compress the output")
 parser.add_argument('--stored-fields', '-s', nargs='+', help="A list of fields that you want to include in the backup (_source, _id, _parent and _routing are included automatically")
 parser.add_argument('--count', '-c', action="store_true", help="Only print the document count")
+parser.add_argument('--doctypes', '-dt', nargs='+', required=False , help="One or more type names to dump.")
+
 
 arguments = parser.parse_args()
 
@@ -30,6 +32,12 @@ if not arguments.indexes:
     indexes = ['_all']
 else:
     indexes = arguments.indexes
+
+if not arguments.doctypes:
+    doctypes=[]
+else:
+    doctypes=arguments.doctypes
+
 
 if arguments.bzip2 and arguments.gzip:
     sys.stderr.write("Invalid combination of options: I can write either bzip2 or gzip, not both.\n")
@@ -91,7 +99,8 @@ if arguments.stored_fields:
 fields = list(fields)
 
 query_body = { "query": { "match_all": {} }, "fields": fields }
-scroll_id = es.scan(query_body = query_body, indexes = indexes)
+
+scroll_id = es.scan(query_body = query_body, indexes = indexes,doctypes=doctypes)
 
 indexes = set()
 
